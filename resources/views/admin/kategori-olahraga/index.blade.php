@@ -1,5 +1,6 @@
 @extends('layouts.app')
 
+@section('title', 'Kategori')
 @section('sbdatalapang', 'active')
 @section('content')
 <div class="page-heading">
@@ -30,7 +31,7 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">Daftar Kategori Olahraga</h5>
-                <a style="background-color: #ef7d2d;" href="{{ route('admin.kategori-olahraga.create') }}" class="btn btn-primary btn-sm">
+                <a style="background-color: #ef7d2d; border-radius: 10px;" href="{{ route('admin.kategori-olahraga.create') }}" class="btn btn-primary btn-sm border-0">
                     <i class="bi bi-plus-lg"></i> Tambah Kategori
                 </a>
             </div>
@@ -50,13 +51,13 @@
                                 <tr>
                                     <td>{{ $kategori->nama_kategori }}</td>
                                     <td>{{ $kategori->deskripsi }}</td>
-                                    <td>{{ $kategori->lapangan_count }}</td>
+                                    <td class="item-center">{{ $kategori->lapangan_count }}</td>
                                     <td>
-                                        <a href="{{ route('admin.kategori-olahraga.edit', $kategori) }}" class="btn btn-sm btn-outline-primary">Edit</a>
+                                        <a href="{{ route('admin.kategori-olahraga.edit', $kategori) }}" class="btn btn-sm btn-outline-primary" style="border-radius: 10px;">Edit</a>
                                         <form action="{{ route('admin.kategori-olahraga.destroy', $kategori) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin hapus kategori ini?')">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-outline-danger">Hapus</button>
+                                            <button type="submit" style="border-radius: 10px;" class="btn btn-sm btn-outline-danger">Hapus</button>
                                         </form>
                                     </td>
                                 </tr>

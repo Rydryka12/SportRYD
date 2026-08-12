@@ -12,4 +12,8 @@ class KategoriOlahraga extends Model
     public function lapangan() {
         return $this->hasMany(Lapangan::class, 'kategori_id');
     }
+    public function paketLangganan()
+    {
+        return $this->hasMany(PaketLangganan::class, 'kategori_id');
+    }
 }

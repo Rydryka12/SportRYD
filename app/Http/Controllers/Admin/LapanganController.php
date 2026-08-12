@@ -24,8 +24,9 @@ class LapanganController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'nama_lapang' => 'required|string|max:255',
             'kategori_id' => 'required|exists:kategori_olahraga,id',
-            'nama_lapangan' => 'required|string|max:255',
+            'deskripsi' => 'nullable|string',
             'tarif_per_jam' => 'required|integer|min:0',
             'status_aktif' => 'required|in:Aktif,Nonaktif',
         ]);
@@ -45,7 +46,8 @@ class LapanganController extends Controller
     {
         $validated = $request->validate([
             'kategori_id' => 'required|exists:kategori_olahraga,id',
-            'nama_lapangan' => 'required|string|max:255',
+            'nama_lapang' => 'required|string|max:255',
+            'deskripsi' => 'required|string',
             'tarif_per_jam' => 'required|integer|min:0',
             'status_aktif' => 'required|in:Aktif,Nonaktif',
         ]);

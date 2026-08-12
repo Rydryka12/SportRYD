@@ -53,7 +53,10 @@ class KategoriOlahragaController extends Controller
      */
     public function edit(KategoriOlahraga $kategoriOlahraga)
     {
-        return view('admin.kategori-olahraga.edit', compact('kategoriOlahraga'));
+
+        return view('admin.kategori-olahraga.edit', [
+            'kategori' => $kategoriOlahraga
+        ]);
     }
 
     /**
@@ -63,6 +66,7 @@ class KategoriOlahragaController extends Controller
     {
         $validated = $request->validate([
             'nama_kategori' => 'required|string|max:255|unique:kategori_olahraga,nama_kategori,' . $kategoriOlahraga->id,
+            'deskripsi' => 'nullable|string|max:255',
         ]);
 
         $kategoriOlahraga->update($validated);
