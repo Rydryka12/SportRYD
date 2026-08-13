@@ -11,14 +11,15 @@ class CustomerLapanganController extends Controller
 {
     public function index(Request $request)
     {
-        $kategoriList = KategoriOlahraga::all();
-        $kategoriId = $request->query('kategori_id');
+        // 1. Ambil semua kategori untuk tombol filter
+        $kategoriList = KategoriOlahraga::orderBy('nama_kategori')->get();
 
-        $lapanganList = Lapangan::where('status_aktif', 'Aktif')
-            ->when($kategoriId, fn ($q) => $q->where('kategori_id', $kategoriId))
-            ->with('kategoriOlahraga')
+        // 2. Ambil SEMUA lapangan yang aktif beserta relasi kategorinya
+        $lapanganList = Lapangan::with('kategoriOlahraga')
+            ->where('status_aktif', 'Aktif')
             ->get();
 
-        return view('customer.lapangan.index', compact('lapanganList', 'kategoriList', 'kategoriId'));
+        // 3. Kirim data ke view (Pastikan tidak ada compact 'kategoriId' di sini)
+        return view('customer.lapangan.index', compact('kategoriList', 'lapanganList'));
     }
 }

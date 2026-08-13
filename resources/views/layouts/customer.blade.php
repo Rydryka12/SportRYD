@@ -182,6 +182,7 @@
         footer { color: var(--text-muted); }
     </style>
 </head>
+
 <body>
     <div id="app">
         <!-- Menggunakan format Layout Horizontal Mazer -->
@@ -279,5 +280,6 @@
     <script src="{{ asset('assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js') }}"></script>
     <script src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </body>
 </html>

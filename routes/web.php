@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\KategoriOlahragaController;
 use App\Http\Controllers\Admin\LapanganController;
 use App\Http\Controllers\Customer\CustomerLapanganController;
+use App\Http\Controllers\Customer\BookingController;
 use App\Http\Controllers\Admin\PaketLanggananController;
 
 Route::view('/', 'welcome');
@@ -47,10 +48,15 @@ Route::middleware(['auth', 'role:Admin'])->prefix('admin')->name('admin.')->grou
 
 Route::middleware(['auth', 'role:Customer'])->prefix('customer')->name('customer.')->group(function () {
     Route::get('/beranda', [CustomerLapanganController::class, 'index'])->name('beranda');
-    Route::get('/beranda', [CustomerLapanganController::class, 'index'])->name('beranda');
-    Route::get('/lapangan/{lapangan}/pilih-jenis', [CustomerBookingController::class, 'pilihJenis'])->name('pilih-jenis');
-    Route::get('/lapangan/{lapangan}/booking', [CustomerBookingController::class, 'create'])->name('booking.create');
-    Route::post('/lapangan/{lapangan}/booking', [CustomerBookingController::class, 'store'])->name('booking.store');
-    Route::get('/riwayat', [CustomerBookingController::class, 'riwayat'])->name('riwayat');
+    // Route::get('/beranda', [CustomerLapanganController::class, 'index'])->name('beranda');
+    Route::get('/lapangan/{lapangan}/pilih-jenis', [BookingController::class, 'pilihJenis'])->name('pilih-jenis');
+    Route::get('/lapangan/{lapangan}/booking', [BookingController::class, 'create'])->name('booking.create');
+    Route::post('/lapangan/{lapangan}/booking', [BookingController::class, 'store'])->name('booking.store');
+    Route::get('/riwayat', [BookingController::class, 'riwayat'])->name('riwayat');
+
+    Route::get('/lapangan/{lapangan}/booking', [BookingController::class, 'create'])->name('booking.create');
+    Route::post('/lapangan/{lapangan}/booking', [BookingController::class, 'store'])->name('booking.store');
+
+    // Route::get('/lapangan/{lapangan}/pilih-jenis', [BookingController::class, 'pilihJenis'])->name('pilih-jenis');
 });
 require __DIR__.'/auth.php';
