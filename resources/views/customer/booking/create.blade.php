@@ -94,13 +94,6 @@
         cursor: not-allowed;
         opacity: 0.85;
     }
-    .slot-nonaktif {
-        background-color: #f8f9fa;
-        border: 1px solid #eef0f2;
-        color: #adb5bd;
-        cursor: not-allowed;
-        opacity: 0.6;
-    }
 
     @keyframes pop {
         0% { transform: scale(0.9); }
@@ -152,9 +145,7 @@
         box-shadow: 0 6px 14px rgba(239,125,45,0.35);
     }
     .btn-orange-submit:active { transform: translateY(0); }
-    [x-cloak] { 
-        display: none !important;
-        }
+    [x-cloak] { display: none !important; }
 </style>
 
 <div class="d-flex justify-content-center">
@@ -221,14 +212,9 @@
                         }
                         if (this.selected.length === 0 || jam === Math.min(...this.selected) - 1 || jam === Math.max(...this.selected) + 1) {
                             this.selected.push(jam);
+                        } else {
+                            this.selected = [jam];
                         }
-                        // kalau nggak nempel di ujung, klik diabaikan (tombolnya juga sudah didisable)
-                    },
-                    bolehDipilih(jam) {
-                        if (this.terisi.includes(jam)) return false;
-                        if (this.selected.length === 0) return true;
-                        if (this.selected.includes(jam)) return true;
-                        return jam === Math.min(...this.selected) - 1 || jam === Math.max(...this.selected) + 1;
                     }
                  }">
 
@@ -245,42 +231,23 @@
                 <div class="row g-2 mb-3">
                     @for ($jam = 7; $jam <= 22; $jam++)
                         <div class="col-6 col-sm-3">
-                            <!-- <button type="button"
+                            <button type="button"
                                     @click="toggle({{ $jam }})"
-                                    :disabled="terisi.includes({{ $jam }}) || !bolehDipilih({{ $jam }})"
+                                    :disabled="terisi.includes({{ $jam }})"
                                     :class="{
                                         'slot-terisi': terisi.includes({{ $jam }}),
                                         'slot-dipilih': selected.includes({{ $jam }}),
-                                        'slot-nonaktif': !terisi.includes({{ $jam }}) && !selected.includes({{ $jam }}) && !bolehDipilih({{ $jam }}),
-                                        'slot-kosong': !terisi.includes({{ $jam }}) && !selected.includes({{ $jam }}) && bolehDipilih({{ $jam }})
+                                        'slot-kosong': !terisi.includes({{ $jam }}) && !selected.includes({{ $jam }})
                                     }"
                                     class="slot-btn w-100 border-0 d-flex flex-column align-items-center justify-content-center">
-                                <template x-if="selected.includes({{ $jam }})">
-                                    <span><i class="bi bi-check-lg"></i> {{ sprintf('%02d:00', $jam) }}</span>
-                                </template>
-                                <template x-if="!selected.includes({{ $jam }})">
-                                    <span><i class="bi bi-clock me-1"></i>{{ sprintf('%02d:00', $jam) }}</span>
-                                </template>
-                                <small x-show="selected.includes({{ $jam }})" class="fw-normal" style="font-size: 0.7rem;">Dipilih</small>
-                            </button> -->
-                            <button type="button"
-        @click="toggle({{ $jam }})"
-        :disabled="terisi.includes({{ $jam }}) || !bolehDipilih({{ $jam }})"
-        :class="{
-            'slot-terisi': terisi.includes({{ $jam }}),
-            'slot-dipilih': selected.includes({{ $jam }}),
-            'slot-nonaktif': !terisi.includes({{ $jam }}) && !selected.includes({{ $jam }}) && !bolehDipilih({{ $jam }}),
-            'slot-kosong': !terisi.includes({{ $jam }}) && !selected.includes({{ $jam }}) && bolehDipilih({{ $jam }})
-        }"
-        class="slot-btn w-100 border-0 d-flex flex-column align-items-center justify-content-center">
-    <span x-show="!selected.includes({{ $jam }})" x-cloak>
-        <i class="bi bi-clock me-1"></i>{{ sprintf('%02d:00', $jam) }}
-    </span>
-    <span x-show="selected.includes({{ $jam }})" x-cloak>
-        <i class="bi bi-check-lg"></i> {{ sprintf('%02d:00', $jam) }}
-    </span>
-    <small x-show="selected.includes({{ $jam }})" x-cloak class="fw-normal" style="font-size: 0.7rem;">Dipilih</small>
-</button>
+                                <span x-show="!selected.includes({{ $jam }})" x-cloak>
+                                    <i class="bi bi-clock me-1"></i>{{ sprintf('%02d:00', $jam) }}
+                                </span>
+                                <span x-show="selected.includes({{ $jam }})" x-cloak>
+                                    <i class="bi bi-check-lg"></i> {{ sprintf('%02d:00', $jam) }}
+                                </span>
+                                <small x-show="selected.includes({{ $jam }})" x-cloak class="fw-normal" style="font-size: 0.7rem;">Dipilih</small>
+                            </button>
                         </div>
                     @endfor
                 </div>

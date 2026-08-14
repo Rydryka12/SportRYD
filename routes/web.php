@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\KategoriOlahragaController;
 use App\Http\Controllers\Admin\LapanganController;
 use App\Http\Controllers\Customer\CustomerLapanganController;
 use App\Http\Controllers\Customer\BookingController;
+use App\Http\Controllers\Customer\PaketLanggananController as CustomerPaketLanggananController;
 use App\Http\Controllers\Admin\PaketLanggananController;
 
 Route::view('/', 'welcome');
@@ -56,6 +57,15 @@ Route::middleware(['auth', 'role:Customer'])->prefix('customer')->name('customer
 
     Route::get('/lapangan/{lapangan}/booking', [BookingController::class, 'create'])->name('booking.create');
     Route::post('/lapangan/{lapangan}/booking', [BookingController::class, 'store'])->name('booking.store');
+
+    // Langganan
+    Route::get('/lapangan/{lapangan}/paket', [CustomerPaketLanggananController::class, 'index'])->name('paket.index');
+    Route::get('/paket/{paketLangganan}/kuota', [CustomerPaketLanggananController::class, 'ambilKuota'])->name('paket.kuota.create');
+    Route::post('/paket/{paketLangganan}/kuota', [CustomerPaketLanggananController::class, 'storeKuota'])->name('paket.kuota.store');
+
+    // Jadwal Tetap
+    Route::get('/paket/{paketLangganan}/jadwal-tetap', [CustomerPaketLanggananController::class, 'ambilJadwalTetap'])->name('paket.jadwal-tetap.create');
+    Route::post('/paket/{paketLangganan}/jadwal-tetap', [CustomerPaketLanggananController::class, 'storeJadwalTetap'])->name('paket.jadwal-tetap.store');
 
     // Route::get('/lapangan/{lapangan}/pilih-jenis', [BookingController::class, 'pilihJenis'])->name('pilih-jenis');
 });

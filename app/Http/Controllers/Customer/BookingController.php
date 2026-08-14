@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Customer;
 use App\Http\Controllers\Controller;
 use App\Models\Lapangan;
 use App\Models\Booking;
+use App\Models\LanggananCustomer;
+use App\Models\Pembayaran;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -57,7 +59,10 @@ class BookingController extends Controller
                 abort(409, 'Slot jam ini baru saja dipesan orang lain, coba pilih jam lain.');
             }
 
-            $durasiJam = Carbon::parse($validated['jam_selesai'])->diffInHours(Carbon::parse($validated['jam_mulai']));
+            // $durasiJam = Carbon::parse($validated['jam_selesai'])->diffInHours(Carbon::parse($validated['jam_mulai']));
+            $durasiJam = abs(
+                Carbon::parse($validated['jam_selesai'])->diffInHours(Carbon::parse($validated['jam_mulai']))
+            );
 
             Booking::create([
                 'customer_id' => auth()->id(),
@@ -69,9 +74,32 @@ class BookingController extends Controller
                 'sumber' => 'Customer',
                 'harga' => $durasiJam * $lapangan->tarif_per_jam,
             ]);
+            Pembayaran::create([
+                'booking_id' => $booking->id,
+                'jumlah' => $booking->harga,
+                'metode' => 'QRIS',
+                'status' => 'Menunggu Konfirmasi',
+            ]);
         });
 
-        return redirect()->route('customer.beranda')
-            ->with('success', 'Booking berhasil! ' . $lapangan->nama_lapangan . ' - ' . $validated['tanggal'] . '.');
+        return redirect()->route('customer.riwayat')
+            ->with('success', 'Booking berhasil! ' . $lapangan->nama_lapang . ' - ' . $validated['tanggal'] . '.');
+    }
+
+    // riwayat
+    public function riwayat()
+    {
+        $bookingList = Booking::where('customer_id', auth()->id())
+            ->with('lapangan')
+            ->orderByDesc('tanggal')
+            ->orderByDesc('jam_mulai')
+            ->get();
+
+        $paketAktifList = LanggananCustomer::where('customer_id', auth()->id())
+        ->where('status', 'Aktif')
+        ->with(['paketLangganan.kategoriOlahraga', 'lapangan'])
+        ->get();
+
+        return view('customer.booking.riwayat', compact('bookingList', 'paketAktifList'));
     }
 }

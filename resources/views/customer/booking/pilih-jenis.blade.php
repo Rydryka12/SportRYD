@@ -120,7 +120,7 @@
 
             <!-- Pilihan 2: Paket Langganan -->
             <div class="col-12 col-md-6">
-                <a href="#" class="text-decoration-none text-dark">
+                <a href="{{ route('customer.paket.index', $lapangan) }}" class="text-decoration-none text-dark">
                     <div class="card option-card h-100 bg-white">
                         <div class="card-body p-4 d-flex flex-column">
                             <div class="icon-box bg-light-orange text-orange mb-3">

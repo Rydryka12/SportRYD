@@ -29,4 +29,9 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function langgananCustomer()
+    {
+        return $this->hasMany(LanggananCustomer::class, 'customer_id');
+    }
 }

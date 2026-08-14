@@ -15,4 +15,8 @@ class PaketLangganan extends Model
     public function kategoriOlahraga(){
         return $this->belongsTo(KategoriOlahraga::class, 'kategori_id');
     }
+    public function langgananCustomer()
+    {
+        return $this->hasMany(LanggananCustomer::class, 'paket_id');
+    }
 }
