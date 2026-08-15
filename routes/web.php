@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\LapanganController;
 use App\Http\Controllers\Customer\CustomerLapanganController;
 use App\Http\Controllers\Customer\BookingController;
 use App\Http\Controllers\Customer\PaketLanggananController as CustomerPaketLanggananController;
+use App\Http\Controllers\Kasir\BookingController as KasirBookingController;
 use App\Http\Controllers\Admin\PaketLanggananController;
 
 Route::view('/', 'welcome');
@@ -68,5 +69,13 @@ Route::middleware(['auth', 'role:Customer'])->prefix('customer')->name('customer
     Route::post('/paket/{paketLangganan}/jadwal-tetap', [CustomerPaketLanggananController::class, 'storeJadwalTetap'])->name('paket.jadwal-tetap.store');
 
     // Route::get('/lapangan/{lapangan}/pilih-jenis', [BookingController::class, 'pilihJenis'])->name('pilih-jenis');
+});
+
+// KASIR
+Route::middleware(['auth', 'role:Kasir'])->prefix('kasir')->name('kasir.')->group(function () {
+    Route::get('/booking', [KasirBookingController::class, 'index'])->name('booking.index');
+    Route::post('/pembayaran/{pembayaran}/konfirmasi', [KasirBookingController::class, 'konfirmasiPembayaran'])->name('pembayaran.konfirmasi');
+    Route::get('/booking/manual', [KasirBookingController::class, 'create'])->name('booking.create');
+    Route::post('/booking/manual', [KasirBookingController::class, 'store'])->name('booking.store');
 });
 require __DIR__.'/auth.php';

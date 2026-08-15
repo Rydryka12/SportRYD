@@ -64,7 +64,7 @@ class BookingController extends Controller
                 Carbon::parse($validated['jam_selesai'])->diffInHours(Carbon::parse($validated['jam_mulai']))
             );
 
-            Booking::create([
+            $booking = Booking::create([
                 'customer_id' => auth()->id(),
                 'lapangan_id' => $lapangan->id,
                 'tanggal' => $validated['tanggal'],
