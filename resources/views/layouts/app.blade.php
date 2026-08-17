@@ -97,83 +97,16 @@
                     <i class="bi bi-ticket-detailed"></i>
                     <span>Data Paket</span>
                 </a>
-                
-                <ul class="submenu ">
-                    
-                    <li class="submenu-item  ">
-                        <a href="layout-default.html" class="submenu-link">Default Layout</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="layout-vertical-1-column.html" class="submenu-link">1 Column</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="layout-vertical-navbar.html" class="submenu-link">Vertical Navbar</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="layout-rtl.html" class="submenu-link">RTL Layout</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="layout-horizontal.html" class="submenu-link">Horizontal Menu</a>
-                        
-                    </li>
-                    
-                </ul>
-                
-
             </li>
             
-            <li class="sidebar-title">Forms &amp; Tables</li>
+            <li class="sidebar-title">Katalog Voucher</li>
             
             <li
-                class="sidebar-item  has-sub">
-                <a href="#" class='sidebar-link'>
+                class="sidebar-item @yield('sbvoucher')">
+                <a href="{{ route('admin.poin-voucher.index') }}" class='sidebar-link'>
                     <i class="bi bi-hexagon-fill"></i>
-                    <span>Form Elements</span>
+                    <span>Point & Katalog Voucher</span>
                 </a>
-                
-                <ul class="submenu ">
-                    
-                    <li class="submenu-item  ">
-                        <a href="form-element-input.html" class="submenu-link">Input</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="form-element-input-group.html" class="submenu-link">Input Group</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="form-element-select.html" class="submenu-link">Select</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="form-element-radio.html" class="submenu-link">Radio</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="form-element-checkbox.html" class="submenu-link">Checkbox</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="form-element-textarea.html" class="submenu-link">Textarea</a>
-                        
-                    </li>
-                    
-                </ul>
-                
-
             </li>
             
             <li

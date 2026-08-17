@@ -8,6 +8,8 @@ use App\Http\Controllers\Customer\BookingController;
 use App\Http\Controllers\Customer\PaketLanggananController as CustomerPaketLanggananController;
 use App\Http\Controllers\Kasir\BookingController as KasirBookingController;
 use App\Http\Controllers\Admin\PaketLanggananController;
+use App\Http\Controllers\Admin\PoinVoucherController;
+
 
 Route::view('/', 'welcome');
 
@@ -21,13 +23,16 @@ Route::get('/dashboard', function () {
 
     if ($role === 'Admin') {
         // Arahkan ke salah satu halaman admin, atau buat dashboard khusus admin
-        return redirect()->route('admin.kategori-olahraga.index'); 
+        // return redirect()->route('admin.kategori-olahraga.index'); 
+        // return redirect()->route('dashboard'); 
+        return view('dashboard');
     } elseif ($role === 'Customer') {
         // Arahkan ke beranda customer
         return redirect()->route('customer.beranda'); 
     } elseif ($role === 'Kasir') {
         // Arahkan ke halaman kasir
-        return redirect('/test-kasir'); 
+        // return redirect('/test-kasir'); 
+        return redirect('kasir/booking'); 
     }
 
     // Jika tidak ada role yang cocok (opsional)
@@ -46,6 +51,23 @@ Route::middleware(['auth', 'role:Admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('kategori-olahraga', KategoriOlahragaController::class);
     Route::resource('lapangan', LapanganController::class);
     Route::resource('paket-langganan', PaketLanggananController::class);
+
+    Route::prefix('poin-voucher')->name('poin-voucher.')->group(function () {
+        Route::get('/', [PoinVoucherController::class, 'index'])->name('index');
+        Route::post('/rasio', [PoinVoucherController::class, 'updateRasioPoin'])->name('rasio.update');
+
+        Route::get('/voucher/create', [PoinVoucherController::class, 'voucherCreate'])->name('voucher.create');
+        Route::post('/voucher', [PoinVoucherController::class, 'voucherStore'])->name('voucher.store');
+        Route::get('/voucher/{voucher}/edit', [PoinVoucherController::class, 'voucherEdit'])->name('voucher.edit');
+        Route::put('/voucher/{voucher}', [PoinVoucherController::class, 'voucherUpdate'])->name('voucher.update');
+        Route::delete('/voucher/{voucher}', [PoinVoucherController::class, 'voucherDestroy'])->name('voucher.destroy');
+
+        Route::get('/tukar-kuota/create', [PoinVoucherController::class, 'tukarKuotaCreate'])->name('tukar-kuota.create');
+        Route::post('/tukar-kuota', [PoinVoucherController::class, 'tukarKuotaStore'])->name('tukar-kuota.store');
+        Route::get('/tukar-kuota/{tukarKuota}/edit', [PoinVoucherController::class, 'tukarKuotaEdit'])->name('tukar-kuota.edit');
+        Route::put('/tukar-kuota/{tukarKuota}', [PoinVoucherController::class, 'tukarKuotaUpdate'])->name('tukar-kuota.update');
+        Route::delete('/tukar-kuota/{tukarKuota}', [PoinVoucherController::class, 'tukarKuotaDestroy'])->name('tukar-kuota.destroy');
+    });
 });
 
 Route::middleware(['auth', 'role:Customer'])->prefix('customer')->name('customer.')->group(function () {

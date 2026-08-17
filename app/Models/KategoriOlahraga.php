@@ -16,4 +16,13 @@ class KategoriOlahraga extends Model
     {
         return $this->hasMany(PaketLangganan::class, 'kategori_id');
     }
+    public function katalogVoucher()
+    {
+        return $this->hasMany(KatalogVoucher::class, 'kategori_id');
+    }
+
+    public function katalogTukarKuota()
+    {
+        return $this->hasMany(KatalogTukarKuota::class, 'kategori_id');
+    }
 }
