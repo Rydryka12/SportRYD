@@ -12,11 +12,20 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Artisan;
 
 class BookingController extends Controller
 {
     public function index()
     {
+
+        // 1. Jalankan trigger-nya sebelum query data ke database
+        Artisan::call('booking:selesaikan-lewat');
+
+        // 2. Baru ambil data booking-nya (Data yang ditarik pasti sudah ter-update)
+        // Contoh kode (sesuaikan dengan kode aslimu):
+        $bookings = Booking::all();
+
         $pembayaranPending = Pembayaran::where('status', 'Menunggu Konfirmasi')
             ->with('booking.customer', 'booking.lapangan')
             ->orderBy('created_at')

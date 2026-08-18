@@ -9,6 +9,9 @@ use App\Http\Controllers\Customer\PaketLanggananController as CustomerPaketLangg
 use App\Http\Controllers\Kasir\BookingController as KasirBookingController;
 use App\Http\Controllers\Admin\PaketLanggananController;
 use App\Http\Controllers\Admin\PoinVoucherController;
+use App\Http\Controllers\Customer\PoinController;
+use App\Http\Controllers\Customer\RescheduleController;
+use App\Http\Controllers\Admin\RescheduleController as AdminRescheduleController;
 
 
 Route::view('/', 'welcome');
@@ -68,8 +71,14 @@ Route::middleware(['auth', 'role:Admin'])->prefix('admin')->name('admin.')->grou
         Route::put('/tukar-kuota/{tukarKuota}', [PoinVoucherController::class, 'tukarKuotaUpdate'])->name('tukar-kuota.update');
         Route::delete('/tukar-kuota/{tukarKuota}', [PoinVoucherController::class, 'tukarKuotaDestroy'])->name('tukar-kuota.destroy');
     });
-});
 
+    Route::prefix('reschedule')->name('reschedule.')->group(function () {
+        Route::get('/', [AdminRescheduleController::class, 'index'])->name('index');
+        Route::post('/{rescheduleRequest}/approve', [AdminRescheduleController::class, 'approve'])->name('approve');
+        Route::post('/{rescheduleRequest}/reject', [AdminRescheduleController::class, 'reject'])->name('reject');
+    });
+});
+// Customer
 Route::middleware(['auth', 'role:Customer'])->prefix('customer')->name('customer.')->group(function () {
     Route::get('/beranda', [CustomerLapanganController::class, 'index'])->name('beranda');
     // Route::get('/beranda', [CustomerLapanganController::class, 'index'])->name('beranda');
@@ -90,7 +99,14 @@ Route::middleware(['auth', 'role:Customer'])->prefix('customer')->name('customer
     Route::get('/paket/{paketLangganan}/jadwal-tetap', [CustomerPaketLanggananController::class, 'ambilJadwalTetap'])->name('paket.jadwal-tetap.create');
     Route::post('/paket/{paketLangganan}/jadwal-tetap', [CustomerPaketLanggananController::class, 'storeJadwalTetap'])->name('paket.jadwal-tetap.store');
 
+    // POINT customer
+    Route::get('/poin', [PoinController::class, 'index'])->name('poin.index');
+    Route::post('/poin/voucher/{voucher}/tukar', [PoinController::class, 'tukarVoucher'])->name('poin.tukar-voucher');
+    Route::post('/poin/kuota/{tukarKuota}/tukar', [PoinController::class, 'tukarKuota'])->name('poin.tukar-kuota');
     // Route::get('/lapangan/{lapangan}/pilih-jenis', [BookingController::class, 'pilihJenis'])->name('pilih-jenis');
+
+    Route::get('/booking/{booking}/reschedule', [RescheduleController::class, 'create'])->name('reschedule.create');
+    Route::post('/booking/{booking}/reschedule', [RescheduleController::class, 'store'])->name('reschedule.store');
 });
 
 // KASIR

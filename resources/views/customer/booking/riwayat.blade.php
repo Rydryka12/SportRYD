@@ -94,12 +94,22 @@
                 </div>
                 <span>Saldo Poin Anda</span>
             </div>
-            <p class="display-6 fw-bold mb-3">0</p>
-            <button disabled class="btn btn-tukar-poin w-100 py-2">
+            <p class="text-4xl font-bold mb-4">{{ $saldoPoin }}</p>
+            <a href="{{ route('customer.poin.index') }}" class="w-100 btn btn-light text-orange fw-semibold">
                 Tukar Poin &rarr;
-            </button>
+            </a>
         </div>
     </div>
+
+
+
+    <!--    \App\Models\PoinCustomer::create([
+       'customer_id' => 2, // ganti sesuai ID akun customer kamu
+       'jumlah_poin' => 100,
+       'jenis' => 'Masuk',
+       'keterangan' => 'Test manual',
+       'tanggal' => now()->toDateString(),
+   ]); -->
 
     <!-- Card Ambil Paket Baru (Bisa Diklik) -->
     <div class="col-12 col-md-6">
@@ -194,7 +204,7 @@
 
             @if ($booking->status === 'Akan Datang')
                 <div class="d-flex gap-2">
-                    <a href="#" class="btn-reschedule text-decoration-none">
+                    <a href="{{ route('customer.reschedule.create', $booking) }}" class="btn-reschedule text-decoration-none">
                         <i class="bi bi-arrow-repeat me-1"></i>Reschedule
                     </a>
                     <a href="#" class="btn-batalkan text-decoration-none">

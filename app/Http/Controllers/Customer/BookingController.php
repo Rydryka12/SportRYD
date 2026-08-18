@@ -10,6 +10,7 @@ use App\Models\Pembayaran;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\PoinCustomer;
 
 class BookingController extends Controller
 {
@@ -100,6 +101,12 @@ class BookingController extends Controller
         ->with(['paketLangganan.kategoriOlahraga', 'lapangan'])
         ->get();
 
-        return view('customer.booking.riwayat', compact('bookingList', 'paketAktifList'));
+        $saldoMasuk = PoinCustomer::where('customer_id', auth()->id())->where('jenis', 'Masuk')->sum('jumlah_poin');
+        $saldoKeluar = PoinCustomer::where('customer_id', auth()->id())->where('jenis', 'Keluar')->sum('jumlah_poin');
+        $saldoPoin = $saldoMasuk - $saldoKeluar;
+
+
+        return view('customer.booking.riwayat', compact('bookingList', 'paketAktifList', 'saldoPoin'));
     }
 }
+                                                                                                                                                                                                                

@@ -110,13 +110,12 @@
             </li>
             
             <li
-                class="sidebar-item  ">
-                <a href="form-layout.html" class='sidebar-link'>
+                class="sidebar-item @yield('sbreschedule') ">
+                <a href="{{ route ('admin.reschedule.index') }}" class='sidebar-link'>
                     <i class="bi bi-file-earmark-medical-fill"></i>
-                    <span>Form Layout</span>
+                    <span>Approval Reschedule</span>
                 </a>
                 
-
             </li>
             
             <li
