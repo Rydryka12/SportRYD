@@ -18,46 +18,159 @@ class BookingController extends Controller
 {
     public function index()
     {
-
-        // 1. Jalankan trigger-nya sebelum query data ke database
+        // Tandai booking yang jamnya sudah lewat sebagai Selesai + beri poin
         Artisan::call('booking:selesaikan-lewat');
 
-        // 2. Baru ambil data booking-nya (Data yang ditarik pasti sudah ter-update)
-        // Contoh kode (sesuaikan dengan kode aslimu):
-        $bookings = Booking::all();
+        $now = now();
 
+        // Data monitoring: semua lapangan aktif + booking yang sedang berlangsung sekarang
+        $lapanganList = Lapangan::where('status_aktif', 'Aktif')
+            ->with('kategoriOlahraga')
+            ->orderBy('nama_lapang')
+            ->get();
+
+        // Booking yang sedang berlangsung saat ini (hari ini, jam_mulai <= now <= jam_selesai)
+        $sedangBerlangsung = Booking::where('status', 'Akan Datang')
+            ->where('tanggal', $now->toDateString())
+            ->where('jam_mulai', '<=', $now->format('H:i:s'))
+            ->where('jam_selesai', '>', $now->format('H:i:s'))
+            ->with('customer', 'lapangan')
+            ->get()
+            ->keyBy('lapangan_id'); // key by lapangan_id agar mudah di-lookup di view
+
+        // Booking menunggu approval dari customer
+        $bookingPendingApproval = Booking::where('status', 'Menunggu Approval')
+            ->with('customer', 'lapangan')
+            ->orderBy('created_at')
+            ->get();
+
+        // Pembayaran menunggu konfirmasi (booking manual kasir via QRIS)
         $pembayaranPending = Pembayaran::where('status', 'Menunggu Konfirmasi')
             ->with('booking.customer', 'booking.lapangan')
             ->orderBy('created_at')
             ->get();
 
-        return view('kasir.booking.index', compact('pembayaranPending'));
+        return view('kasir.booking.index', compact(
+            'lapanganList',
+            'sedangBerlangsung',
+            'bookingPendingApproval',
+            'pembayaranPending',
+            'now'
+        ));
+    }
+
+    // Approve booking customer → status Akan Datang + buat record Pembayaran
+    public function approve(Booking $booking)
+    {
+        abort_if($booking->status !== 'Menunggu Approval', 422, 'Booking tidak dalam status menunggu approval.');
+
+        DB::transaction(function () use ($booking) {
+            // Cek bentrok ulang saat approve (bisa saja slot sudah dipakai booking lain selama menunggu)
+            Lapangan::where('id', $booking->lapangan_id)->lockForUpdate()->first();
+
+            $bentrok = Booking::where('lapangan_id', $booking->lapangan_id)
+                ->where('tanggal', $booking->tanggal)
+                ->whereIn('status', ['Akan Datang', 'Selesai'])
+                ->where('id', '!=', $booking->id)
+                ->where(function ($q) use ($booking) {
+                    $q->where('jam_mulai', '<', $booking->jam_selesai)
+                      ->where('jam_selesai', '>', $booking->jam_mulai);
+                })
+                ->exists();
+
+            if ($bentrok) {
+                abort(409, 'Slot jam ini sudah terisi oleh booking lain, tidak bisa diapprove.');
+            }
+
+            $booking->update([
+                'status'   => 'Akan Datang',
+                'kasir_id' => auth()->id(),
+            ]);
+
+            // Buat record pembayaran setelah diapprove
+            Pembayaran::create([
+                'booking_id' => $booking->id,
+                'jumlah'     => $booking->harga,
+                'metode'     => 'QRIS',
+                'status'     => 'Menunggu Konfirmasi',
+            ]);
+        });
+
+        return back()->with('success', 'Booking ' . $booking->customer->name . ' berhasil diapprove.');
+    }
+
+    // Reject booking customer → status Dibatalkan
+    public function reject(Booking $booking)
+    {
+        abort_if($booking->status !== 'Menunggu Approval', 422, 'Booking tidak dalam status menunggu approval.');
+
+        $booking->update(['status' => 'Dibatalkan']);
+
+        return back()->with('success', 'Booking ' . $booking->customer->name . ' ditolak.');
     }
 
     public function konfirmasiPembayaran(Pembayaran $pembayaran)
     {
         $pembayaran->update([
-            'status' => 'Terkonfirmasi',
+            'status'          => 'Terkonfirmasi',
             'dikonfirmasi_oleh' => auth()->id(),
         ]);
 
         return back()->with('success', 'Pembayaran berhasil dikonfirmasi.');
     }
 
-    // Create
+    // JSON endpoint: slot terisi untuk lapangan + tanggal tertentu (dipakai Alpine fetch di form booking manual)
+    public function slots(Request $request)
+    {
+        $lapanganId = $request->query('lapangan_id');
+        $tanggal    = $request->query('tanggal', now()->toDateString());
+
+        if (! $lapanganId) {
+            return response()->json(['slot_terisi' => [], 'lapangan' => null]);
+        }
+
+        $lapangan = Lapangan::find($lapanganId);
+        if (! $lapangan) {
+            return response()->json(['slot_terisi' => [], 'lapangan' => null]);
+        }
+
+        $bookings = Booking::where('lapangan_id', $lapanganId)
+            ->where('tanggal', $tanggal)
+            ->whereIn('status', ['Akan Datang', 'Selesai'])
+            ->when($request->query('exclude'), fn($q, $ex) => $q->where('id', '!=', $ex))
+            ->get(['jam_mulai', 'jam_selesai']);
+
+        $slotTerisi = [];
+        foreach ($bookings as $b) {
+            $mulai   = Carbon::parse($b->jam_mulai)->hour;
+            $selesai = Carbon::parse($b->jam_selesai)->hour;
+            for ($j = $mulai; $j < $selesai; $j++) {
+                $slotTerisi[] = $j;
+            }
+        }
+
+        return response()->json([
+            'slot_terisi' => $slotTerisi,
+            'lapangan'    => [
+                'id'            => $lapangan->id,
+                'nama_lapang'   => $lapangan->nama_lapang,
+                'tarif_per_jam' => $lapangan->tarif_per_jam,
+                'kategori'      => $lapangan->kategoriOlahraga->nama_kategori ?? '',
+            ],
+        ]);
+    }
+
+    // Create — form booking manual kasir
     public function create(Request $request)
     {
-        $lapanganList = Lapangan::where('status_aktif', 'Aktif')->with('kategoriOlahraga')->get();
-
-        $lapanganId = $request->query('lapangan_id');
-        $tanggal = $request->query('tanggal', now()->toDateString());
-
-        $bookingHariItu = collect();
+        $lapanganList     = Lapangan::where('status_aktif', 'Aktif')->with('kategoriOlahraga')->get();
+        $lapanganId       = $request->query('lapangan_id');
+        $tanggal          = $request->query('tanggal', now()->toDateString());
+        $bookingHariItu   = collect();
         $lapanganTerpilih = null;
 
         if ($lapanganId) {
             $lapanganTerpilih = $lapanganList->firstWhere('id', (int) $lapanganId);
-
             if ($lapanganTerpilih) {
                 $bookingHariItu = Booking::where('lapangan_id', $lapanganId)
                     ->where('tanggal', $tanggal)
@@ -71,30 +184,29 @@ class BookingController extends Controller
         ));
     }
 
+    // Store — booking manual kasir langsung Akan Datang + pembayaran Terkonfirmasi
     public function store(Request $request)
     {
         $validated = $request->validate([
             'nama_pelanggan' => 'required|string|max:255',
-            'no_hp' => 'required|string|max:20',
-            'lapangan_id' => 'required|exists:lapangan,id',
-            'tanggal' => 'required|date|after_or_equal:today',
-            'jam_mulai' => 'required|date_format:H:i',
-            'jam_selesai' => 'required|date_format:H:i|after:jam_mulai',
-            'metode_bayar' => 'required|in:Tunai,QRIS',
+            'no_hp'          => 'required|string|max:20',
+            'lapangan_id'    => 'required|exists:lapangan,id',
+            'tanggal'        => 'required|date|after_or_equal:today',
+            'jam_mulai'      => 'required|date_format:H:i',
+            'jam_selesai'    => 'required|date_format:H:i|after:jam_mulai',
+            'metode_bayar'   => 'required|in:Tunai,QRIS',
         ]);
 
         $lapangan = Lapangan::findOrFail($validated['lapangan_id']);
 
-        // Cari akun pelanggan berdasar no HP; kalau belum ada, bikin baru (walk-in/telepon)
         $customer = User::where('no_hp', $validated['no_hp'])->where('role', 'Customer')->first();
-
         if (! $customer) {
             $customer = User::create([
-                'name' => $validated['nama_pelanggan'],
-                'email' => $validated['no_hp'] . '@walkin.sportryd.local', // placeholder, pelanggan walk-in blm tentu punya email
-                'no_hp' => $validated['no_hp'],
-                'password' => Hash::make(Str::random(16)),
-                'role' => 'Customer',
+                'name'        => $validated['nama_pelanggan'],
+                'email'       => $validated['no_hp'] . '@walkin.sportryd.local',
+                'no_hp'       => $validated['no_hp'],
+                'password'    => Hash::make(Str::random(16)),
+                'role'        => 'Customer',
                 'status_akun' => 'Aktif',
             ]);
         }
@@ -107,7 +219,7 @@ class BookingController extends Controller
                 ->whereIn('status', ['Akan Datang', 'Selesai'])
                 ->where(function ($q) use ($validated) {
                     $q->where('jam_mulai', '<', $validated['jam_selesai'])
-                    ->where('jam_selesai', '>', $validated['jam_mulai']);
+                      ->where('jam_selesai', '>', $validated['jam_mulai']);
                 })
                 ->exists();
 
@@ -115,8 +227,6 @@ class BookingController extends Controller
                 abort(409, 'Slot jam ini sudah dipesan, coba pilih jam lain.');
             }
 
-            // FIX: bungkus abs() -> Carbon 3 bisa hasil minus tergantung urutan parameter,
-            // sama kasusnya seperti bug harga minus di BookingController customer.
             $durasiJam = abs(
                 Carbon::parse($validated['jam_selesai'])->diffInHours(Carbon::parse($validated['jam_mulai']))
             );
@@ -124,20 +234,20 @@ class BookingController extends Controller
             $booking = Booking::create([
                 'customer_id' => $customer->id,
                 'lapangan_id' => $lapangan->id,
-                'kasir_id' => auth()->id(),
-                'tanggal' => $validated['tanggal'],
-                'jam_mulai' => $validated['jam_mulai'],
+                'kasir_id'    => auth()->id(),
+                'tanggal'     => $validated['tanggal'],
+                'jam_mulai'   => $validated['jam_mulai'],
                 'jam_selesai' => $validated['jam_selesai'],
-                'status' => 'Akan Datang',
-                'sumber' => 'Kasir',
-                'harga' => $durasiJam * $lapangan->tarif_per_jam,
+                'status'      => 'Akan Datang', // Kasir langsung Akan Datang, tidak perlu approval
+                'sumber'      => 'Kasir',
+                'harga'       => $durasiJam * $lapangan->tarif_per_jam,
             ]);
 
             Pembayaran::create([
-                'booking_id' => $booking->id,
-                'jumlah' => $booking->harga,
-                'metode' => $validated['metode_bayar'],
-                'status' => 'Terkonfirmasi', // Kasir terima bayarannya langsung di tempat
+                'booking_id'        => $booking->id,
+                'jumlah'            => $booking->harga,
+                'metode'            => $validated['metode_bayar'],
+                'status'            => 'Terkonfirmasi',
                 'dikonfirmasi_oleh' => auth()->id(),
             ]);
         });

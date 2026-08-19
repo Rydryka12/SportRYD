@@ -159,7 +159,7 @@
 <div class="d-flex justify-content-center">
     <div style="max-width: 800px; width: 100%;">
 
-        <a href="{{ route('customer.pilih-jenis', $lapangan) }}" class="text-muted small mb-3 d-inline-block text-decoration-none">
+        <a href="{{ route('customer.beranda') }}" class="text-muted small mb-3 d-inline-block text-decoration-none">
             <i class="bi bi-arrow-left"></i> Kembali
         </a>
 
@@ -249,10 +249,10 @@
                                     }"
                                     class="slot-btn w-100 border-0 d-flex flex-column align-items-center justify-content-center">
                                 <span x-show="!selected.includes({{ $jam }})" x-cloak>
-                                    <i class="bi bi-clock me-1"></i>{{ sprintf('%02d:00', $jam) }}
+                                    <i class="bi bi-clock me-1"></i>{{ sprintf('%02d:00 - %02d:00', $jam, $jam + 1) }}
                                 </span>
                                 <span x-show="selected.includes({{ $jam }})" x-cloak>
-                                    <i class="bi bi-check-lg"></i> {{ sprintf('%02d:00', $jam) }}
+                                    <i class="bi bi-check-lg"></i> {{ sprintf('%02d:00 - %02d:00', $jam, $jam + 1) }}
                                 </span>
                                 <small x-show="selected.includes({{ $jam }})" x-cloak class="fw-normal" style="font-size: 0.7rem;">Dipilih</small>
                             </button>
@@ -282,8 +282,17 @@
                     <hr>
 
                     <div class="ringkasan-row">
-                        <span class="fw-bold text-navy">DP (50%)</span>
-                        <span class="fw-bold text-navy" x-text="'Rp ' + Math.round(selected.length * {{ $lapangan->tarif_per_jam }} * 0.5).toLocaleString('id-ID')"></span>
+                        <span class="fw-bold text-navy">Total</span>
+                        <span class="fw-bold text-navy" x-text="'Rp ' + (selected.length * {{ $lapangan->tarif_per_jam }}).toLocaleString('id-ID')"></span>
+                    </div>
+
+                    <div class="mt-2 mb-3 p-3 rounded-3" style="background:#fff8f0;border:1px solid #fde8d0;">
+                        <div class="d-flex align-items-start gap-2">
+                            <i class="bi bi-info-circle text-orange mt-1" style="font-size:0.9rem;"></i>
+                            <p class="small mb-0" style="color:#7c4a0a;">
+                                Pembayaran dilakukan setelah kasir menyetujui booking kamu.
+                            </p>
+                        </div>
                     </div>
 
                     <form method="POST" action="{{ route('customer.booking.store', $lapangan) }}" class="mt-3">
@@ -292,7 +301,7 @@
                         <input type="hidden" name="jam_mulai" :value="selected.length ? String(Math.min(...selected)).padStart(2,'0') + ':00' : ''">
                         <input type="hidden" name="jam_selesai" :value="selected.length ? String(Math.max(...selected)+1).padStart(2,'0') + ':00' : ''">
                         <button type="submit" class="btn btn-orange-submit w-100 py-2" style="border-radius: 0.75rem;">
-                            Booking &amp; Bayar DP
+                            <i class="bi bi-send me-2"></i>Kirim Permintaan Booking
                         </button>
                     </form>
                 </div>

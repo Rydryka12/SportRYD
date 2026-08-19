@@ -252,10 +252,10 @@
                                     }"
                                     class="slot-btn w-100 border-0 d-flex flex-column align-items-center justify-content-center">
                                 <span x-show="!dalamRangeTerpilih({{ $jam }})" x-cloak>
-                                    <i class="bi bi-clock me-1"></i>{{ sprintf('%02d:00', $jam) }}
+                                    <i class="bi bi-clock me-1"></i>{{ sprintf('%02d:00 - %02d:00', $jam, $jam + 1) }}
                                 </span>
                                 <span x-show="dalamRangeTerpilih({{ $jam }})" x-cloak>
-                                    <i class="bi bi-check-lg"></i> {{ sprintf('%02d:00', $jam) }}
+                                    <i class="bi bi-check-lg"></i> {{ sprintf('%02d:00 - %02d:00', $jam, $jam + 1) }}
                                 </span>
                             </button>
                         </div>

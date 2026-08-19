@@ -49,7 +49,7 @@
     }
 </style>
 
-<a href="{{ route('customer.pilih-jenis', $lapangan) }}" class="text-muted small mb-3 d-inline-block text-decoration-none">
+<a href="{{ route('customer.beranda') }}" class="text-muted small mb-3 d-inline-block text-decoration-none">
     <i class="bi bi-arrow-left"></i> Kembali
 </a>
 

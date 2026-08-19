@@ -4,6 +4,7 @@
 <style>
     /* Menyembunyikan elemen sebelum Alpine.js siap (Mencegah kedip) */
     [x-cloak] { display: none !important; }
+    .position-fixed[x-cloak] { display: none !important; }
 
     /* --- WARNA UTAMA --- */
     .text-navy { color: #0f172a; }
@@ -136,9 +137,33 @@
         background-color: #ea580c;
         color: white;
     }
+    .option-card {
+        border-radius: 0.75rem;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        cursor: pointer;
+    }
+    .option-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 14px rgba(0,0,0,0.09);
+        border-color: #94a3b8 !important;
+    }
 </style>
 
 <!-- Bungkus semuanya dengan Alpine.js -->
+@php
+    $lapanganData = $lapanganList->map(function ($l) {
+        return [
+            'id'          => $l->id,
+            'nama'        => $l->nama_lapang,
+            'kategori'    => $l->kategoriOlahraga->nama_kategori ?? 'Umum',
+            'kategori_id' => $l->kategori_id,
+            'tarif_format'=> number_format($l->tarif_per_jam, 0, ',', '.'),
+            'url_booking' => route('customer.booking.create', $l->id),
+            'url_paket'   => route('customer.paket.index', $l->id),
+        ];
+    })->values();
+@endphp
+
 <div x-data="lapanganFilter()">
 
     <!-- HERO SECTION -->
@@ -211,12 +236,13 @@
 
                         <!-- Tombol Booking -->
                         <div class="mt-auto">
-                            <a :href="lapangan.url" 
+                            <button type="button"
+                               @click="bukaPilihJenis(lapangan)"
                                class="btn btn-orange w-100 py-2 d-flex justify-content-center align-items-center gap-2"
                                style="border-radius: 0.75rem;">
                                 <span>Booking Sekarang</span>
                                 <i class="bi bi-arrow-right-short fs-5"></i>
-                            </a>
+                            </button>
                         </div>
                         
                     </div>
@@ -236,40 +262,116 @@
         </div>
     </div>
 
-</div>
+    <!-- ═══════════════════════════════════════
+         MODAL PILIH JENIS BOOKING
+    ═══════════════════════════════════════ -->
+    <template x-teleport="body">
+        <div x-show="$store.modal.open"
+             x-cloak
+             @keydown.escape.window="$store.modal.open = false"
+             @click.self="$store.modal.open = false"
+             style="position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.55);">
 
-@php
-    // Kita olah datanya di blok PHP terpisah agar Blade tidak bingung
-    $lapanganData = $lapanganList->map(function ($l) {
-        return [
-            'id' => $l->id,
-            'nama' => $l->nama_lapang,
-            'kategori' => $l->kategoriOlahraga->nama_kategori ?? 'Umum',
-            'kategori_id' => $l->kategori_id,
-            'tarif_format' => number_format($l->tarif_per_jam, 0, ',', '.'),
-            'url' => route('customer.pilih-jenis', $l->id),
-        ];
-    })->values();
-@endphp
+            <div x-show="$store.modal.open"
+                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0 translate-y-2"
+                 x-transition:enter-end="opacity-100 translate-y-0"
+                 x-transition:leave="transition ease-in duration-150"
+                 x-transition:leave-start="opacity-100 translate-y-0"
+                 x-transition:leave-end="opacity-0 translate-y-2"
+                 style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:white;border-radius:1rem;width:calc(100% - 2rem);max-width:520px;overflow:hidden;box-shadow:0 20px 25px -5px rgba(0,0,0,.2);">
+
+                <!-- Banner atas -->
+                <div style="background:linear-gradient(135deg,#f0f4fd 0%,#fdf4f0 100%);height:88px;position:relative;">
+                    <span style="position:absolute;top:12px;left:12px;background:white;border:1px solid #dee2e6;border-radius:50px;padding:4px 14px;font-size:0.78rem;font-weight:600;color:#12244a;"
+                          x-text="$store.modal.lapangan?.kategori"></span>
+                    <div style="position:absolute;bottom:-26px;left:50%;transform:translateX(-50%);width:52px;height:52px;background:#e5e9f2;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:800;color:#12244a;box-shadow:0 4px 8px rgba(0,0,0,.1);"
+                         x-text="$store.modal.lapangan ? $store.modal.lapangan.nama.charAt(0).toUpperCase() : ''"></div>
+                    <!-- Tombol tutup -->
+                    <button type="button"
+                            @click.stop="$store.modal.open = false"
+                            style="position:absolute;top:10px;right:10px;background:none;border:none;cursor:pointer;font-size:1.1rem;color:#6b7280;line-height:1;padding:4px;">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+
+                <!-- Konten modal -->
+                <div style="padding:2.5rem 2rem 1.75rem;">
+                    <h5 class="fw-bold text-center mb-1" style="color:#12244a;" x-text="$store.modal.lapangan?.nama"></h5>
+                    <p class="text-center text-muted small mb-4">
+                        Rp <span x-text="$store.modal.lapangan?.tarif_format"></span>/jam
+                    </p>
+
+                    <p class="fw-bold mb-1" style="color:#12244a;font-size:0.95rem;">Pilih Jenis Booking</p>
+                    <p class="text-muted small mb-3">Pilih cara booking yang sesuai kebutuhan kamu</p>
+
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                        <!-- Booking per Jam -->
+                        <a x-bind:href="$store.modal.lapangan?.url_booking"
+                           @click.stop
+                           style="text-decoration:none;color:inherit;display:block;">
+                            <div style="border:1.5px solid #dee2e6;border-radius:0.75rem;padding:1rem;cursor:pointer;transition:all 0.2s ease;height:100%;"
+                                 onmouseover="this.style.borderColor='#94a3b8';this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 14px rgba(0,0,0,.08)'"
+                                 onmouseout="this.style.borderColor='#dee2e6';this.style.transform='';this.style.boxShadow=''">
+                                <div style="width:40px;height:40px;background:#e8f0fe;border-radius:0.5rem;display:flex;align-items:center;justify-content:center;margin-bottom:0.75rem;">
+                                    <i class="bi bi-calendar3" style="color:#2563eb;font-size:1.1rem;"></i>
+                                </div>
+                                <div style="font-weight:700;font-size:0.88rem;color:#12244a;margin-bottom:0.35rem;">Booking per Jam</div>
+                                <div style="font-size:0.76rem;color:#6b7280;margin-bottom:0.5rem;">Pilih tanggal & jam, bayar DP. Cocok untuk sekali main.</div>
+                                <div style="font-size:0.76rem;font-weight:600;color:#2563eb;">Mulai Rp <span x-text="$store.modal.lapangan?.tarif_format"></span>/jam</div>
+                            </div>
+                        </a>
+
+                        <!-- Paket Langganan -->
+                        <a x-bind:href="$store.modal.lapangan?.url_paket"
+                           @click.stop
+                           style="text-decoration:none;color:inherit;display:block;">
+                            <div style="border:1.5px solid #dee2e6;border-radius:0.75rem;padding:1rem;cursor:pointer;transition:all 0.2s ease;height:100%;"
+                                 onmouseover="this.style.borderColor='#94a3b8';this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 14px rgba(0,0,0,.08)'"
+                                 onmouseout="this.style.borderColor='#dee2e6';this.style.transform='';this.style.boxShadow=''">
+                                <div style="width:40px;height:40px;background:#fcece3;border-radius:0.5rem;display:flex;align-items:center;justify-content:center;margin-bottom:0.75rem;">
+                                    <i class="bi bi-box-seam" style="color:#ef7d2d;font-size:1.1rem;"></i>
+                                </div>
+                                <div style="font-weight:700;font-size:0.88rem;color:#12244a;margin-bottom:0.35rem;">Paket Langganan</div>
+                                <div style="font-size:0.76rem;color:#6b7280;margin-bottom:0.5rem;">Kuota sesi atau jadwal tetap. Lebih hemat untuk yang rutin.</div>
+                                <div style="font-size:0.76rem;font-weight:600;color:#ef7d2d;">Kuota &amp; Jadwal Tetap tersedia</div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+</div>{{-- end x-data lapanganFilter --}}
 
 <script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.store('modal', {
+            open: false,
+            lapangan: null,
+        });
+    });
+
     function lapanganFilter() {
         return {
             search: '',
             activeKategori: null,
-            // Panggil variabel PHP ke dalam JavaScript
             data: @json($lapanganData),
-            
-            // Fungsi yang menjalankan filter secara real-time
+
             filtered() {
                 return this.data.filter(l => {
                     const matchKategori = this.activeKategori === null || l.kategori_id === this.activeKategori;
                     const matchSearch = l.nama.toLowerCase().includes(this.search.toLowerCase());
                     return matchKategori && matchSearch;
                 });
-            }
+            },
+
+            bukaPilihJenis(lapangan) {
+                Alpine.store('modal').lapangan = lapangan;
+                Alpine.store('modal').open = true;
+            },
         }
     }
 </script>
-<!-- ================================== -->
 @endsection

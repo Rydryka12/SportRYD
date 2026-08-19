@@ -39,6 +39,9 @@
 
         * { font-family: 'Nunito', sans-serif; }
 
+        /* Sembunyikan elemen Alpine.js sebelum init (mencegah flash) */
+        [x-cloak] { display: none !important; }
+
         body {
             background-color: var(--bg);
             color: #1e2a45;
@@ -231,7 +234,7 @@
                                     </div>
                                 </div>
 
-                                <form method="POST" action="" class="m-0">
+                                <form method="POST" action="{{ route('logout') }}" class="m-0">
                                     @csrf
                                     <button type="submit" class="btn btn-link text-white text-decoration-none p-0" title="Keluar">
                                         <i class="bi bi-box-arrow-right fs-4"></i>
