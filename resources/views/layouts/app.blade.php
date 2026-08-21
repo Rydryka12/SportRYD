@@ -1,410 +1,427 @@
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> @yield('title') - SportRYD</title>
-    
-    <link rel="shortcut icon" href="data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2033%2034'%20fill-rule='evenodd'%20stroke-linejoin='round'%20stroke-miterlimit='2'%20xmlns:v='https://vecta.io/nano'%3e%3cpath%20d='M3%2027.472c0%204.409%206.18%205.552%2013.5%205.552%207.281%200%2013.5-1.103%2013.5-5.513s-6.179-5.552-13.5-5.552c-7.281%200-13.5%201.103-13.5%205.513z'%20fill='%23435ebe'%20fill-rule='nonzero'/%3e%3ccircle%20cx='16.5'%20cy='8.8'%20r='8.8'%20fill='%2341bbdd'/%3e%3c/svg%3e" type="image/x-icon">
-    <link rel="shortcut icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACEAAAAiCAYAAADRcLDBAAAEs2lUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNS41LjAiPgogPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgeG1sbnM6ZXhpZj0iaHR0cDovL25zLmFkb2JlLmNvbS9leGlmLzEuMC8iCiAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyIKICAgIHhtbG5zOnBob3Rvc2hvcD0iaHR0cDovL25zLmFkb2JlLmNvbS9waG90b3Nob3AvMS4wLyIKICAgIHhtbG5zOnhtcD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLyIKICAgIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIgogICAgeG1sbnM6c3RFdnQ9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZUV2ZW50IyIKICAgZXhpZjpQaXhlbFhEaW1lbnNpb249IjMzIgogICBleGlmOlBpeGVsWURpbWVuc2lvbj0iMzQiCiAgIGV4aWY6Q29sb3JTcGFjZT0iMSIKICAgdGlmZjpJbWFnZVdpZHRoPSIzMyIKICAgdGlmZjpJbWFnZUxlbmd0aD0iMzQiCiAgIHRpZmY6UmVzb2x1dGlvblVuaXQ9IjIiCiAgIHRpZmY6WFJlc29sdXRpb249Ijk2LjAiCiAgIHRpZmY6WVJlc29sdXRpb249Ijk2LjAiCiAgIHBob3Rvc2hvcDpDb2xvck1vZGU9IjMiCiAgIHBob3Rvc2hvcDpJQ0NQcm9maWxlPSJzUkdCIElFQzYxOTY2LTIuMSIKICAgeG1wOk1vZGlmeURhdGU9IjIwMjItMDMtMzFUMTA6NTA6MjMrMDI6MDAiCiAgIHhtcDpNZXRhZGF0YURhdGU9IjIwMjItMDMtMzFUMTA6NTA6MjMrMDI6MDAiPgogICA8eG1wTU06SGlzdG9yeT4KICAgIDxyZGY6U2VxPgogICAgIDxyZGY6bGkKICAgICAgc3RFdnQ6YWN0aW9uPSJwcm9kdWNlZCIKICAgICAgc3RFdnQ6c29mdHdhcmVBZ2VudD0iQWZmaW5pdHkgRGVzaWduZXIgMS4xMC4xIgogICAgICBzdEV2dDp3aGVuPSIyMDIyLTAzLTMxVDEwOjUwOjIzKzAyOjAwIi8+CiAgICA8L3JkZjpTZXE+CiAgIDwveG1wTU06SGlzdG9yeT4KICA8L3JkZjpEZXNjcmlwdGlvbj4KIDwvcmRmOlJERj4KPC94OnhtcG1ldGE+Cjw/eHBhY2tldCBlbmQ9InIiPz5V57uAAAABgmlDQ1BzUkdCIElFQzYxOTY2LTIuMQAAKJF1kc8rRFEUxz9maORHo1hYKC9hISNGTWwsRn4VFmOUX5uZZ36oeTOv954kW2WrKLHxa8FfwFZZK0WkZClrYoOe87ypmWTO7dzzud97z+nec8ETzaiaWd4NWtYyIiNhZWZ2TvE946WZSjqoj6mmPjE1HKWkfdxR5sSbgFOr9Ll/rXoxYapQVik8oOqGJTwqPL5i6Q5vCzeo6dii8KlwpyEXFL519LjLLw6nXP5y2IhGBsFTJ6ykijhexGra0ITl5bRqmWU1fx/nJTWJ7PSUxBbxJkwijBBGYYwhBgnRQ7/MIQIE6ZIVJfK7f/MnyUmuKrPOKgZLpEhj0SnqslRPSEyKnpCRYdXp/9++msneoFu9JgwVT7b91ga+LfjetO3PQ9v+PgLvI1xkC/m5A+h7F32zoLXug38dzi4LWnwHzjeg8UGPGbFfySvuSSbh9QRqZ6H+Gqrm3Z7l9zm+h+iafNUV7O5Bu5z3L/wAdthn7QIme0YAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAJTSURBVFiF7Zi9axRBGIefEw2IdxFBRQsLWUTBaywSK4ubdSGVIY1Y6HZql8ZKCGIqwX/AYLmCgVQKfiDn7jZeEQMWfsSAHAiKqPiB5mIgELWYOW5vzc3O7niHhT/YZvY37/swM/vOzJbIqVq9uQ04CYwCI8AhYAlYAB4Dc7HnrOSJWcoJcBS4ARzQ2F4BZ2LPmTeNuykHwEWgkQGAet9QfiMZjUSt3hwD7psGTWgs9pwH1hC1enMYeA7sKwDxBqjGnvNdZzKZjqmCAKh+U1kmEwi3IEBbIsugnY5avTkEtIAtFhBrQCX2nLVehqyRqFoCAAwBh3WGLAhbgCRIYYinwLolwLqKUwwi9pxV4KUlxKKKUwxC6ZElRCPLYAJxGfhSEOCz6m8HEXvOB2CyIMSk6m8HoXQTmMkJcA2YNTHm3congOvATo3tE3A29pxbpnFzQSiQPcB55IFmFNgFfEQeahaAGZMpsIJIAZWAHcDX2HN+2cT6r39GxmvC9aPNwH5gO1BOPFuBVWAZue0vA9+A12EgjPadnhCuH1WAE8ivYAQ4ohKaagV4gvxi5oG7YSA2vApsCOH60WngKrA3R9IsvQUuhIGY00K4flQG7gHH/mLytB4C42EgfrQb0mV7us8AAMeBS8mGNMR4nwHamtBB7B4QRNdaS0M8GxDEog7iyoAguvJ0QYSBuAOcAt71Kfl7wA8DcTvZ2KtOlJEr+ByyQtqqhTyHTIeB+ONeqi3brh+VgIN0fohUgWGggizZFTplu12yW8iy/YLOGWMpDMTPXnl+Az9vj2HERYqPAAAAAElFTkSuQmCC" type="image/png">
-    
-
-  <link rel="stylesheet" crossorigin href="{{ asset('Mazer/assets/compiled/css/app.css') }}">
-  <link rel="stylesheet" crossorigin href="{{ asset('Mazer/assets/compiled/css/app-dark.css') }}">
-  <link rel="stylesheet" crossorigin href="{{ asset('Mazer/assets/compiled/css/iconly.css') }}">
+    <title>@yield('title') - SportRYD</title>
+    <link rel="stylesheet" crossorigin href="{{ asset('Mazer/assets/compiled/css/app.css') }}">
+    <link rel="stylesheet" crossorigin href="{{ asset('Mazer/assets/compiled/css/app-dark.css') }}">
+    <link rel="stylesheet" crossorigin href="{{ asset('Mazer/assets/compiled/css/iconly.css') }}">
 </head>
-
 <body>
     <script src="{{ asset('Mazer/assets/static/js/initTheme.js') }}"></script>
     <div id="app">
         <div id="sidebar">
             <div class="sidebar-wrapper active">
-    <div class="sidebar-header position-relative">
-        <div class="d-flex justify-content-between align-items-center">
-            <div class="logo">
-                <a href="index.html">
-                    <h1 class="">Sport<span>RYD</span></h1>
-                </a>
-            </div>
-            <div class="theme-toggle d-flex gap-2  align-items-center mt-2">
-                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
-                    role="img" class="iconify iconify--system-uicons" width="20" height="20"
-                    preserveAspectRatio="xMidYMid meet" viewBox="0 0 21 21">
-                    <g fill="none" fill-rule="evenodd" stroke="currentColor" stroke-linecap="round"
-                        stroke-linejoin="round">
-                        <path
-                            d="M10.5 14.5c2.219 0 4-1.763 4-3.982a4.003 4.003 0 0 0-4-4.018c-2.219 0-4 1.781-4 4c0 2.219 1.781 4 4 4zM4.136 4.136L5.55 5.55m9.9 9.9l1.414 1.414M1.5 10.5h2m14 0h2M4.135 16.863L5.55 15.45m9.899-9.9l1.414-1.415M10.5 19.5v-2m0-14v-2"
-                            opacity=".3"></path>
-                        <g transform="translate(-210 -1)">
-                            <path d="M220.5 2.5v2m6.5.5l-1.5 1.5"></path>
-                            <circle cx="220.5" cy="11.5" r="4"></circle>
-                            <path d="m214 5l1.5 1.5m5 14v-2m6.5-.5l-1.5-1.5M214 18l1.5-1.5m-4-5h2m14 0h2"></path>
-                        </g>
-                    </g>
-                </svg>
-                <div class="form-check form-switch fs-6">
-                    <input class="form-check-input  me-0" type="checkbox" id="toggle-dark" style="cursor: pointer">
-                    <label class="form-check-label"></label>
+                <div class="sidebar-header position-relative">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="logo">
+                            <a href="{{ route('dashboard') }}">
+                                <h1>Sport<span>RYD</span></h1>
+                            </a>
+                        </div>
+                        <div class="theme-toggle d-flex gap-2 align-items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" width="15" height="15" viewBox="0 0 21 21" class="d-none d-xl-inline-block">
+                                <g fill="none" fill-rule="evenodd" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M10.5 14.5c2.219 0 4-1.763 4-3.982a4.003 4.003 0 0 0-4-4.018c-2.219 0-4 1.781-4 4c0 2.219 1.781 4 4 4zM4.136 4.136L5.55 5.55m9.9 9.9l1.414 1.414M1.5 10.5h2m14 0h2M4.135 16.863L5.55 15.45m9.899-9.9l1.414-1.415M10.5 19.5v-2m0-14v-2" opacity=".3"></path>
+                                    <g transform="translate(-210 -1)"><path d="M220.5 2.5v2m6.5.5l-1.5 1.5"></path><circle cx="220.5" cy="11.5" r="4"></circle><path d="m214 5l1.5 1.5m5 14v-2m6.5-.5l-1.5-1.5M214 18l1.5-1.5m-4-5h2m14 0h2"></path></g>
+                                </g>
+                            </svg>
+                            <div class="form-check form-switch mb-0" style="padding:0;margin:0;display:flex;align-items:center;">
+                                <input class="form-check-input me-0" type="checkbox" id="toggle-dark" style="cursor:pointer;margin:0;float:none;vertical-align:middle;">
+                                <label class="form-check-label"></label>
+                            </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" width="15" height="15" viewBox="0 0 24 24" class="d-none d-xl-inline-block">
+                                <path fill="currentColor" d="m17.75 4.09l-2.53 1.94l.91 3.06l-2.63-1.81l-2.63 1.81l.91-3.06l-2.53-1.94L12.44 4l1.06-3l1.06 3l3.19.09m3.5 6.91l-1.64 1.25l.59 1.98l-1.7-1.17l-1.7 1.17l.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95l2.06.05m-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85c-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14c.4-.4.82-.76 1.27-1.08c.75-.53 1.93.36 1.85 1.19c-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82c-2.81 3.14-2.7 7.96.31 10.98c3.02 3.01 7.84 3.12 10.98.31Z"></path>
+                            </svg>
+                        </div>
+                        <div class="sidebar-toggler x">
+                            <a href="#" class="sidebar-hide d-xl-none d-block"><i class="bi bi-x bi-middle"></i></a>
+                        </div>
+                    </div>
                 </div>
-                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
-                    role="img" class="iconify iconify--mdi" width="20" height="20" preserveAspectRatio="xMidYMid meet"
-                    viewBox="0 0 24 24">
-                    <path fill="currentColor"
-                        d="m17.75 4.09l-2.53 1.94l.91 3.06l-2.63-1.81l-2.63 1.81l.91-3.06l-2.53-1.94L12.44 4l1.06-3l1.06 3l3.19.09m3.5 6.91l-1.64 1.25l.59 1.98l-1.7-1.17l-1.7 1.17l.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95l2.06.05m-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85c-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14c.4-.4.82-.76 1.27-1.08c.75-.53 1.93.36 1.85 1.19c-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82c-2.81 3.14-2.7 7.96.31 10.98c3.02 3.01 7.84 3.12 10.98.31Z">
-                    </path>
-                </svg>
-            </div>
-            <div class="sidebar-toggler  x">
-                <a href="#" class="sidebar-hide d-xl-none d-block"><i class="bi bi-x bi-middle"></i></a>
+
+                <div class="sidebar-menu">
+                    <ul class="menu">
+                        <li class="sidebar-title">Menu</li>
+                        <li class="sidebar-item @yield('sbdashboard')">
+                            <a href="{{ route('dashboard') }}" class="sidebar-link">
+                                <i class="bi bi-grid-fill"></i><span>Dashboard</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item @yield('sbdatalapang')">
+                            <a href="{{ route('admin.kategori-olahraga.index') }}" class="sidebar-link">
+                                <i class="bi bi-geo-alt-fill"></i><span>Kategori Lapangan</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item @yield('sblapang')">
+                            <a href="{{ route('admin.lapangan.index') }}" class="sidebar-link">
+                                <i class="bi bi-collection-fill"></i><span>Data Lapangan</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item @yield('sbpaket')">
+                            <a href="{{ route('admin.paket-langganan.index') }}" class="sidebar-link">
+                                <i class="bi bi-ticket-detailed"></i><span>Data Paket</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-title">Layanan</li>
+                        <li class="sidebar-item @yield('sbvoucher')">
+                            <a href="{{ route('admin.poin-voucher.index') }}" class="sidebar-link">
+                                <i class="bi bi-hexagon-fill"></i><span>Point & Voucher</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item @yield('sbreschedule')">
+                            <a href="{{ route('admin.reschedule.index') }}" class="sidebar-link">
+                                <i class="bi bi-file-earmark-medical-fill"></i><span>Approval Reschedule</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item @yield('sblaporan')">
+                            <a href="{{ route('admin.laporan.index') }}" class="sidebar-link">
+                                <i class="bi bi-journal-check"></i><span>Laporan Pendapatan</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item @yield('sbpelanggan')">
+                            <a href="{{ route('admin.pelanggan.index') }}" class="sidebar-link">
+                                <i class="bi bi-people-fill"></i><span>Data Pelanggan</span>
+                            </a>
+                        </li>
+                    </ul>
+
+                    <div class="sidebar-account">
+                        <div class="account-info">
+                            <div class="account-avatar">
+                                <i class="bi bi-person-circle"></i>
+                            </div>
+                            <div class="account-details">
+                                <div class="account-name">{{ Auth::user()->nama }}</div>
+                                <div class="account-role">Administrator</div>
+                            </div>
+                        </div>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="btn-logout">
+                                <i class="bi bi-box-arrow-right"></i><span>Keluar</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="sidebar-menu">
-        <ul class="menu">
-            <li class="sidebar-title">Menu</li>
-            
-            <li
-                class="sidebar-item @yield('sbdashboard') ">
-                <a href="{{ route('dashboard') }}   " class='sidebar-link'>
-                    <i class="bi bi-grid-fill"></i>
-                    <span>Dashboard</span>
-                </a>
-                
 
-            </li>
-            
-            <li
-                class="sidebar-item @yield('sbdatalapang') ">
-                <a href="{{ route('admin.kategori-olahraga.index') }}" class='sidebar-link'>
-                    <i class="bi bi-geo-alt-fill"></i>
-                    <span>Kategori Lapangan</span>
-                </a>
-            </li>
-            
-            <li
-                class="sidebar-item @yield('sblapang')">
-                <a href="{{ route('admin.lapangan.index') }}" class='sidebar-link'>
-                    <i class="bi bi-collection-fill"></i>
-                    <span>Data Lapangan</span>
-                </a>
-            </li>
-            
-            <li
-                class="sidebar-item @yield('sbpaket')">
-                <a href="{{ route ('admin.paket-langganan.index') }}" class='sidebar-link'>
-                    <i class="bi bi-ticket-detailed"></i>
-                    <span>Data Paket</span>
-                </a>
-            </li>
-            
-            <li class="sidebar-title">Katalog Voucher</li>
-            
-            <li
-                class="sidebar-item @yield('sbvoucher')">
-                <a href="{{ route('admin.poin-voucher.index') }}" class='sidebar-link'>
-                    <i class="bi bi-hexagon-fill"></i>
-                    <span>Point & Katalog Voucher</span>
-                </a>
-            </li>
-            
-            <li
-                class="sidebar-item @yield('sbreschedule') ">
-                <a href="{{ route ('admin.reschedule.index') }}" class='sidebar-link'>
-                    <i class="bi bi-file-earmark-medical-fill"></i>
-                    <span>Approval Reschedule</span>
-                </a>
-                
-            </li>
-            
-            <li
-                class="sidebar-item @yield('sblaporan')">
-                <a href="{{ route('admin.laporan.index') }}" class='sidebar-link'>
-                    <i class="bi bi-journal-check"></i>
-                    <span>Laporan Pendapatan</span>
-                </a>
-            </li>
-
-            <li
-                class="sidebar-item @yield('sbpelanggan')">
-                <a href="{{ route('admin.pelanggan.index') }}" class='sidebar-link'>
-                    <i class="bi bi-journal-check"></i>
-                    <span>Data Pelanggan</span>
-                </a>
-            </li>
-
-            <li class="sidebar-title">Akun</li>
-
-            <li class="sidebar-item">
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit" class="sidebar-link border-0 bg-transparent w-100 text-start"
-                        style="cursor:pointer;">
-                        <i class="bi bi-box-arrow-right"></i>
-                        <span>Keluar</span>
-                    </button>
-                </form>
-            </li>
-
-        </ul>
-    </div>
-</div>
-        </div>
         <div id="main">
-            <header class="mb-3">
-                <a href="#" class="burger-btn d-block d-xl-none">
-                    <i class="bi bi-justify fs-3"></i>
+            <header class="mb-0" style="min-height:0;padding:0;background:transparent;border:none;">
+                <a href="#" class="burger-btn d-block d-xl-none" style="padding:.6rem .9rem;">
+                    <i class="bi bi-justify fs-4"></i>
                 </a>
             </header>
-            
+
             @yield('content')
 
             <footer>
-    <div class="footer clearfix mb-0 text-muted">
-        <div class="float-start">
-            <p>2023 &copy; Mazer</p>
-        </div>
-        <div class="float-end">
-            <p>Crafted with <span class="text-danger"><i class="bi bi-heart-fill icon-mid"></i></span>
-                by <a href="https://saugi.me">Saugi</a></p>
-        </div>
-    </div>
-</footer>
+                <div class="footer clearfix mb-0 text-muted">
+                    <div class="float-start"><p>2026 &copy; SportRYD</p></div>
+                    <div class="float-end">
+                        <p>by <a href="https://ryanadryan-portofolio2.vercel.app/">RYDRYKA</a></p>
+                    </div>
+                </div>
+            </footer>
         </div>
     </div>
+
     <script src="{{ asset('Mazer/assets/static/js/components/dark.js') }}"></script>
     <script src="{{ asset('Mazer/assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js') }}"></script>
-    
-    
     <script src="{{ asset('Mazer/assets/compiled/js/app.js') }}"></script>
-    
-
-    
-<!-- Need: Apexcharts -->
-<script src="{{ asset('Mazer/assets/extensions/apexcharts/apexcharts.min.js') }}"></script>
-<script src="{{ asset('Mazer/assets/static/js/pages/dashboard.js') }}"></script>
+    <script src="{{ asset('Mazer/assets/extensions/apexcharts/apexcharts.min.js') }}"></script>
+    <script src="{{ asset('Mazer/assets/static/js/pages/dashboard.js') }}"></script>
 
 <style>
-    /* =========================================================
-   SPORT RYD - SIDEBAR
-   ========================================================= */
+/* =====================================================
+   SPORTRYD ADMIN — COMPACT UNIFIED DESIGN SYSTEM v3
+   Base 13px, sidebar compact, 1 konsep rounded
+   ===================================================== */
 
-    /* =========================
-    LIGHT MODE
-    Sidebar putih
-    ========================= */
+/* DESIGN TOKENS */
+:root {
+    --sr-primary:    #ef7d2d;
+    --sr-navy:       #12244a;
+    --sr-border:     #e9ecef;
+    --sr-hover:      rgba(18,36,74,0.07);
+    --sr-bg:         #f4f6fb;
+    --sr-radius-sm:  6px;
+    --sr-radius:     8px;
+    --sr-radius-lg:  12px;
+    --sr-surface-dk: #12244a;
+    --sr-bg-dk:      #0e1a33;
+    --sr-text-dk:    #d4daea;
+    --sr-border-dk:  rgba(255,255,255,0.11);
+    --sr-hover-dk:   rgba(255,255,255,0.07);
+}
 
-    #sidebar {
-        background: #ffffff !important;
-    }
+/* BASE SCALE */
+html { font-size: 13px; }
+body { font-size: 1rem !important; background: var(--sr-bg) !important; }
 
-    #sidebar .sidebar-wrapper {
-        background: #ffffff !important;
-    }
+/* FORCE ROUNDED — override semua Mazer default */
+.btn, button.btn, a.btn { border-radius: var(--sr-radius) !important; font-size: 0.923rem !important; }
+.btn-sm  { padding: .3rem .65rem !important; font-size: 0.846rem !important; }
+.form-control, .form-select, textarea { border-radius: var(--sr-radius) !important; font-size: 0.923rem !important; }
+.input-group > .form-control:first-child,
+.input-group > .form-select:first-child  { border-radius: var(--sr-radius) 0 0 var(--sr-radius) !important; }
+.input-group > .form-control:last-child,
+.input-group > .form-select:last-child   { border-radius: 0 var(--sr-radius) var(--sr-radius) 0 !important; }
+.input-group > :only-child               { border-radius: var(--sr-radius) !important; }
+.input-group-text                        { border-radius: var(--sr-radius) !important; font-size: 0.923rem !important; }
+.card { border-radius: var(--sr-radius-lg) !important; }
+.card-header:first-child { border-radius: var(--sr-radius-lg) var(--sr-radius-lg) 0 0 !important; }
+.card-footer:last-child  { border-radius: 0 0 var(--sr-radius-lg) var(--sr-radius-lg) !important; }
+.badge { border-radius: var(--sr-radius-sm) !important; padding: .28rem .55rem !important; font-size: 0.769rem !important; font-weight: 600 !important; }
+.dropdown-menu { border-radius: 10px !important; }
+.modal-content { border-radius: var(--sr-radius-lg) !important; }
+.alert { border-radius: var(--sr-radius) !important; font-size: 0.923rem !important; }
+.page-link { border-radius: var(--sr-radius-sm) !important; }
+.pagination { gap: 3px !important; }
+.list-group { border-radius: 10px !important; }
+.list-group-item:first-child { border-radius: 10px 10px 0 0 !important; }
+.list-group-item:last-child  { border-radius: 0 0 10px 10px !important; }
+.progress, .progress-bar { border-radius: 50px !important; }
+.table { font-size: 0.923rem !important; }
+.card-body { padding: 1rem !important; }
+.card-header { padding: .7rem 1rem !important; background: transparent !important; border-bottom: 1px solid var(--sr-border) !important; }
+.card-title { font-size: .923rem !important; font-weight: 600 !important; margin-bottom: 0 !important; }
 
-    #sidebar .sidebar-header {
-        background: #ffffff !important;
-        border-bottom: 1px solid #e9ecef !important;
-    }
+/* HEADER — hapus bar kosong Mazer */
+#main > header {
+    min-height: 0 !important; padding: 0 !important;
+    background: transparent !important; border: none !important;
+    box-shadow: none !important; margin-bottom: 0 !important;
+}
+@media (min-width: 1200px) { #main > header { display: none !important; } }
 
-    #sidebar .sidebar-menu {
-        background: #ffffff !important;
-    }
+/* SIDEBAR */
+#sidebar, #sidebar .sidebar-wrapper, #sidebar .sidebar-header, #sidebar .sidebar-menu {
+    background: #fff !important;
+}
+#sidebar .sidebar-wrapper {
+    display: flex; flex-direction: column; height: 100%;
+}
+#sidebar .sidebar-header {
+    border-bottom: 1px solid var(--sr-border) !important;
+    padding: .55rem .85rem !important;
+}
+/* Logo kiri + toggle tengah + close kanan — tidak saling nabrak */
+#sidebar .sidebar-header .d-flex {
+    flex-wrap: nowrap !important;
+    gap: .4rem !important;
+    align-items: center !important;
+}
+#sidebar .sidebar-header .logo { flex-shrink: 0; }
+#sidebar .sidebar-header .logo a { text-decoration: none !important; }
+#sidebar .sidebar-header .logo h1 {
+    margin: 0 !important; padding: 0 !important;
+    font-size: 1rem !important; font-weight: 700 !important;
+    line-height: 1 !important; color: var(--sr-navy) !important;
+}
+#sidebar .sidebar-header .logo h1 span { color: var(--sr-primary) !important; }
 
-    #sidebar .sidebar-menu .submenu {
-        background: #ffffff !important;
-    }
+/* Toggle dark — compact & tidak terlalu lebar */
+.theme-toggle {
+    display: flex !important; align-items: center !important;
+    gap: .3rem !important; flex-shrink: 0 !important;
+}
+/* Theme toggle container — di mobile, geser ke kiri beri ruang untuk tombol close */
+.theme-toggle { display: flex !important; align-items: center !important;
+    gap: .4rem !important; flex-shrink: 0 !important; margin-right: auto !important; }
+@media (min-width: 1200px) {
+    .theme-toggle { margin-right: 0 !important; }
+}
+.theme-toggle svg {
+    width: 16px !important; height: 16px !important;
+    color: var(--sr-primary) !important;
+    display: block !important; flex-shrink: 0 !important;
+}
+/* Wrapper form-check reset */
+.theme-toggle .form-check {
+    padding: 0 !important; margin: 0 !important;
+    display: flex !important; align-items: center !important;
+    min-height: 0 !important;
+}
+#toggle-dark {
+    width: 40px !important; height: 22px !important; cursor: pointer !important;
+    background-color: #ced4da !important; border: 2px solid #ced4da !important;
+    box-shadow: none !important; transition: all .2s !important; flex-shrink: 0 !important;
+    border-radius: 22px !important;
+    margin: 0 !important; float: none !important; vertical-align: middle !important;
+    position: relative !important;
+}
+#toggle-dark:checked { background-color: var(--sr-primary) !important; border-color: var(--sr-primary) !important; }
+#toggle-dark:focus   { border-color: var(--sr-primary) !important; box-shadow: 0 0 0 .15rem rgba(239,125,45,.25) !important; outline: none !important; }
 
+/* Close btn — touch target layak di mobile */
+.sidebar-toggler.x { flex-shrink: 0 !important; margin-left: .2rem !important; }
+.sidebar-toggler.x .sidebar-hide {
+    display: flex !important; align-items: center !important; justify-content: center !important;
+    width: 34px !important; height: 34px !important; border-radius: 8px !important;
+    font-size: 1.3rem !important; line-height: 1 !important; color: #6b7280 !important;
+    background: rgba(0,0,0,0.05) !important; transition: background .15s !important;
+}
+.sidebar-toggler.x .sidebar-hide:hover { background: rgba(0,0,0,0.1) !important; color: #374151 !important; }
 
-    /* Logo */
-    #sidebar .sidebar-header .logo a {
-        color: #12244a !important;
-    }
+/* Sidebar menu */
+#sidebar .sidebar-menu {
+    flex: 1 !important; overflow-y: auto !important;
+    display: flex !important; flex-direction: column !important;
+}
+#sidebar .sidebar-menu > ul { flex: 1 !important; }
+#sidebar .sidebar-title {
+    color: #8a93a8 !important; font-size: .65rem !important;
+    text-transform: uppercase !important; letter-spacing: .5px !important;
+    padding: .7rem 1rem .2rem !important;
+}
+#sidebar .sidebar-menu .sidebar-link {
+    color: var(--sr-navy) !important; background: transparent !important;
+    font-size: .823rem !important; padding: .5rem .8rem !important;
+    border-radius: var(--sr-radius) !important;
+    margin: 0 10px 2px 10px !important;
+    transition: background .15s !important;
+}
+#sidebar .sidebar-menu .sidebar-link i { color: var(--sr-navy) !important; font-size: .85rem !important; }
+#sidebar .sidebar-menu .sidebar-link:hover { background: var(--sr-hover) !important; }
+#sidebar .sidebar-menu .sidebar-item.active > .sidebar-link {
+    background: var(--sr-primary) !important; color: #fff !important;
+}
+#sidebar .sidebar-menu .sidebar-item.active > .sidebar-link i { color: #fff !important; }
 
-    #sidebar .sidebar-header .logo h1 {
-        margin: 0 !important;
-        padding: 0 !important;
-        font-size: 20px !important;
-        line-height: 1 !important;
-        font-weight: 600 !important;
-        letter-spacing: -0.5px;
-        color: #12244a !important;
-    }
+/* ACCOUNT SECTION */
+.sidebar-account {
+    padding: .65rem !important; border-top: 1px solid var(--sr-border) !important; flex-shrink: 0 !important;
+}
+.account-info {
+    display: flex !important; align-items: center !important; gap: .55rem !important;
+    padding: .55rem .65rem !important; background: rgba(239,125,45,.08) !important;
+    border-radius: var(--sr-radius) !important;
+}
+.account-avatar {
+    width: 30px !important; height: 30px !important; min-width: 30px !important;
+    display: flex !important; align-items: center !important; justify-content: center !important;
+    background: var(--sr-primary) !important; border-radius: 50% !important;
+    flex-shrink: 0 !important; overflow: hidden !important;
+}
+.account-avatar i { font-size: .95rem !important; color: #fff !important; line-height: 1 !important; }
+.account-details { flex: 1 !important; min-width: 0 !important; }
+.account-name {
+    font-size: .8rem !important; font-weight: 600 !important;
+    color: var(--sr-navy) !important; white-space: nowrap !important;
+    overflow: hidden !important; text-overflow: ellipsis !important; line-height: 1.2 !important;
+}
+.account-role { font-size: .65rem !important; color: #8a93a8 !important; line-height: 1.2 !important; }
+.btn-logout {
+    width: 100% !important; margin-top: .4rem !important; padding: .4rem !important;
+    background: transparent !important; border: 1px solid var(--sr-border) !important;
+    border-radius: var(--sr-radius) !important; color: var(--sr-navy) !important;
+    font-size: .8rem !important; display: flex !important; align-items: center !important;
+    justify-content: center !important; gap: .35rem !important;
+    cursor: pointer !important; transition: all .2s !important;
+}
+.btn-logout:hover { background: rgba(220,53,69,.1) !important; border-color: #dc3545 !important; color: #dc3545 !important; }
 
-    #sidebar .sidebar-header .logo h1 span {
-        font-size: inherit !important;
-        font-weight: 700 !important;
-        color: #ef7d2d !important;
-    }
+/* MAIN CONTENT */
+#main { background: var(--sr-bg) !important; }
+.page-heading h3 { font-size: 1.1rem !important; font-weight: 700 !important; }
 
+/* =====================================================
+   DARK MODE
+   ===================================================== */
+html[data-bs-theme="dark"] body,
+html[data-bs-theme="dark"] #main { background: var(--sr-bg-dk) !important; }
 
-    /* Judul menu */
-    #sidebar .sidebar-title {
-        color: #7c8495 !important;
-    }
+/* Sidebar dark */
+html[data-bs-theme="dark"] #sidebar,
+html[data-bs-theme="dark"] #sidebar .sidebar-wrapper,
+html[data-bs-theme="dark"] #sidebar .sidebar-header,
+html[data-bs-theme="dark"] #sidebar .sidebar-menu { background: var(--sr-surface-dk) !important; }
+html[data-bs-theme="dark"] #sidebar .sidebar-header { border-bottom-color: var(--sr-border-dk) !important; }
+html[data-bs-theme="dark"] #sidebar .sidebar-header .logo h1 { color: #fff !important; }
+html[data-bs-theme="dark"] #sidebar .sidebar-title { color: rgba(255,255,255,.42) !important; }
+html[data-bs-theme="dark"] #sidebar .sidebar-menu .sidebar-link { color: var(--sr-text-dk) !important; }
+html[data-bs-theme="dark"] #sidebar .sidebar-menu .sidebar-link i { color: var(--sr-text-dk) !important; }
+html[data-bs-theme="dark"] #sidebar .sidebar-menu .sidebar-link:hover { background: var(--sr-hover-dk) !important; color: #fff !important; }
+html[data-bs-theme="dark"] #sidebar .sidebar-menu .sidebar-link:hover i { color: #fff !important; }
+html[data-bs-theme="dark"] .sidebar-toggler.x .sidebar-hide { color: var(--sr-text-dk) !important; }
 
+/* Account dark */
+html[data-bs-theme="dark"] .sidebar-account { border-top-color: var(--sr-border-dk) !important; }
+html[data-bs-theme="dark"] .account-info { background: rgba(239,125,45,.13) !important; }
+html[data-bs-theme="dark"] .account-name { color: var(--sr-text-dk) !important; }
+html[data-bs-theme="dark"] .account-role { color: rgba(212,218,234,.55) !important; }
+html[data-bs-theme="dark"] .btn-logout { border-color: var(--sr-border-dk) !important; color: var(--sr-text-dk) !important; }
+html[data-bs-theme="dark"] .btn-logout:hover { background: rgba(220,53,69,.15) !important; border-color: #dc3545 !important; color: #dc3545 !important; }
 
-    /* Menu */
-    #sidebar .sidebar-menu .sidebar-link {
-        color: #12244a !important;
-        background: transparent !important;
-    }
+/* Global dark text */
+html[data-bs-theme="dark"] h1,html[data-bs-theme="dark"] h2,html[data-bs-theme="dark"] h3,
+html[data-bs-theme="dark"] h4,html[data-bs-theme="dark"] h5,html[data-bs-theme="dark"] h6 { color: var(--sr-text-dk) !important; }
+html[data-bs-theme="dark"] p, html[data-bs-theme="dark"] label,
+html[data-bs-theme="dark"] td, html[data-bs-theme="dark"] th { color: var(--sr-text-dk) !important; }
+html[data-bs-theme="dark"] .text-muted { color: rgba(212,218,234,.55) !important; }
+html[data-bs-theme="dark"] hr { border-color: var(--sr-border-dk) !important; }
 
+/* Cards dark */
+html[data-bs-theme="dark"] .card { background: var(--sr-surface-dk) !important; border-color: var(--sr-border-dk) !important; color: var(--sr-text-dk) !important; }
+html[data-bs-theme="dark"] .card-header { border-bottom-color: var(--sr-border-dk) !important; color: var(--sr-text-dk) !important; }
+html[data-bs-theme="dark"] .card-footer { border-top-color: var(--sr-border-dk) !important; }
 
-    /* Icon */
-    #sidebar .sidebar-menu .sidebar-link i {
-        color: #12244a !important;
-    }
+/* Tables dark */
+html[data-bs-theme="dark"] .table { color: var(--sr-text-dk) !important; border-color: var(--sr-border-dk) !important; }
+html[data-bs-theme="dark"] .table thead th { color: var(--sr-text-dk) !important; border-color: var(--sr-border-dk) !important; background: transparent !important; }
+html[data-bs-theme="dark"] .table tbody td { border-color: var(--sr-border-dk) !important; }
+html[data-bs-theme="dark"] .table-striped > tbody > tr:nth-of-type(odd) > * { background: rgba(255,255,255,.04) !important; color: var(--sr-text-dk) !important; }
+html[data-bs-theme="dark"] .table-hover > tbody > tr:hover > * { background: rgba(255,255,255,.06) !important; }
 
+/* Forms dark */
+html[data-bs-theme="dark"] .form-control,
+html[data-bs-theme="dark"] .form-select,
+html[data-bs-theme="dark"] textarea { background: rgba(255,255,255,.05) !important; border-color: var(--sr-border-dk) !important; color: var(--sr-text-dk) !important; }
+html[data-bs-theme="dark"] .form-control:focus,
+html[data-bs-theme="dark"] .form-select:focus { background: rgba(255,255,255,.08) !important; border-color: var(--sr-primary) !important; box-shadow: 0 0 0 .12rem rgba(239,125,45,.2) !important; color: var(--sr-text-dk) !important; }
+html[data-bs-theme="dark"] .form-control::placeholder { color: rgba(212,218,234,.4) !important; }
+html[data-bs-theme="dark"] .form-label { color: var(--sr-text-dk) !important; }
+html[data-bs-theme="dark"] .input-group-text { background: rgba(255,255,255,.08) !important; border-color: var(--sr-border-dk) !important; color: var(--sr-text-dk) !important; }
 
-    /* Hover */
-    #sidebar .sidebar-menu .sidebar-link:hover {
-        background: rgba(18, 36, 74, 0.08) !important;
-        color: #12244a !important;
-    }
+/* Alerts dark */
+html[data-bs-theme="dark"] .alert-success  { background: rgba(25,135,84,.2) !important;  border-color: rgba(25,135,84,.4) !important;  color: #75dba8 !important; }
+html[data-bs-theme="dark"] .alert-danger   { background: rgba(220,53,69,.2) !important;   border-color: rgba(220,53,69,.4) !important;   color: #f08090 !important; }
+html[data-bs-theme="dark"] .alert-warning  { background: rgba(255,193,7,.15) !important;  border-color: rgba(255,193,7,.35) !important;  color: #ffc107 !important; }
+html[data-bs-theme="dark"] .alert-info     { background: rgba(13,202,240,.15) !important; border-color: rgba(13,202,240,.3) !important;  color: #6edff6 !important; }
 
-    #sidebar .sidebar-menu .sidebar-link:hover i {
-        color: #12244a !important;
-    }
+/* Modal dark */
+html[data-bs-theme="dark"] .modal-content { background: var(--sr-surface-dk) !important; border-color: var(--sr-border-dk) !important; color: var(--sr-text-dk) !important; }
+html[data-bs-theme="dark"] .modal-header,
+html[data-bs-theme="dark"] .modal-footer  { border-color: var(--sr-border-dk) !important; }
+html[data-bs-theme="dark"] .btn-close { filter: invert(1) !important; }
 
+/* Dropdown dark */
+html[data-bs-theme="dark"] .dropdown-menu { background: var(--sr-surface-dk) !important; border-color: var(--sr-border-dk) !important; }
+html[data-bs-theme="dark"] .dropdown-item { color: var(--sr-text-dk) !important; }
+html[data-bs-theme="dark"] .dropdown-item:hover { background: var(--sr-hover-dk) !important; color: #fff !important; }
 
-    /* Menu aktif ORANGE */
-    #sidebar .sidebar-menu .sidebar-item.active > .sidebar-link {
-        background: #ef7d2d !important;
-        color: #ffffff !important;
-        border-radius: 12px !important;
-        margin-left: 16px !important;
-        margin-right: 16px !important;
-    }
+/* Pagination dark */
+html[data-bs-theme="dark"] .page-link { background: var(--sr-surface-dk) !important; border-color: var(--sr-border-dk) !important; color: var(--sr-text-dk) !important; }
+html[data-bs-theme="dark"] .page-item.active .page-link { background: var(--sr-primary) !important; border-color: var(--sr-primary) !important; color: #fff !important; }
+html[data-bs-theme="dark"] .page-item.disabled .page-link { background: transparent !important; color: rgba(212,218,234,.3) !important; }
 
-    #sidebar .sidebar-menu .sidebar-item.active > .sidebar-link i {
-        color: #ffffff !important;
-    }
+/* Breadcrumb dark */
+html[data-bs-theme="dark"] .breadcrumb-item,
+html[data-bs-theme="dark"] .breadcrumb-item a { color: var(--sr-text-dk) !important; }
+html[data-bs-theme="dark"] .breadcrumb-item.active { color: var(--sr-primary) !important; }
+html[data-bs-theme="dark"] .breadcrumb-item + .breadcrumb-item::before { color: rgba(212,218,234,.4) !important; }
 
+/* List group dark */
+html[data-bs-theme="dark"] .list-group-item { background: var(--sr-surface-dk) !important; border-color: var(--sr-border-dk) !important; color: var(--sr-text-dk) !important; }
 
-    /* =========================
-    DARK MODE
-    Sidebar navy
-    ========================= */
-
-    html[data-bs-theme="dark"] #sidebar,
-    html[data-bs-theme="dark"] #sidebar .sidebar-wrapper,
-    html[data-bs-theme="dark"] #sidebar .sidebar-header,
-    html[data-bs-theme="dark"] #sidebar .sidebar-menu,
-    html[data-bs-theme="dark"] #sidebar .submenu {
-        background: #12244a !important;
-    }
-
-    html[data-bs-theme="dark"] #sidebar .sidebar-header {
-        border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
-    }
-
-
-    /* Logo dark */
-    html[data-bs-theme="dark"] #sidebar .sidebar-header .logo a {
-        color: #ffffff !important;
-    }
-
-    html[data-bs-theme="dark"] #sidebar .sidebar-header .logo h1 {
-        color: #ffffff !important;
-    }
-
-    html[data-bs-theme="dark"] #sidebar .sidebar-header .logo h1 span {
-        color: #ef7d2d !important;
-    }
-
-
-    /* Judul menu dark */
-    html[data-bs-theme="dark"] #sidebar .sidebar-title {
-        color: rgba(255, 255, 255, 0.55) !important;
-    }
-
-
-    /* Menu dark */
-    html[data-bs-theme="dark"] #sidebar .sidebar-menu .sidebar-link {
-        color: #d9deea !important;
-        background: transparent !important;
-    }
-
-
-    /* Icon dark */
-    html[data-bs-theme="dark"] #sidebar .sidebar-menu .sidebar-link i {
-        color: #d9deea !important;
-    }
-
-
-    /* Hover dark */
-    html[data-bs-theme="dark"] #sidebar .sidebar-menu .sidebar-link:hover {
-        background: rgba(255, 255, 255, 0.08) !important;
-        color: #ffffff !important;
-    }
-
-    html[data-bs-theme="dark"] #sidebar .sidebar-menu .sidebar-link:hover i {
-        color: #ffffff !important;
-    }
-
-
-    /* Menu aktif tetap ORANGE */
-    html[data-bs-theme="dark"] #sidebar .sidebar-menu .sidebar-item.active > .sidebar-link {
-        background: #ef7d2d !important;
-        color: #ffffff !important;
-    }
-
-    html[data-bs-theme="dark"] #sidebar .sidebar-menu .sidebar-item.active > .sidebar-link i {
-        color: #ffffff !important;
-    }
-    /* =========================================================
-   DARK / LIGHT MODE TOGGLE
-   SPORT RYD ORANGE
-   ========================================================= */
-
-    #toggle-dark {
-        cursor: pointer !important;
-
-        width: 48px !important;
-        height: 24px !important;
-
-        background-color: #e9ecef !important;
-        border: 2px solid #e9ecef !important;
-
-        box-shadow: none !important;
-        transition: all 0.2s ease-in-out !important;
-    }
-
-
-    /* Saat DARK MODE aktif */
-    #toggle-dark:checked {
-        background-color: #ef7d2d !important;
-        border-color: #ef7d2d !important;
-    }
-
-
-    /* Fokus */
-    #toggle-dark:focus {
-        border-color: #ef7d2d !important;
-        box-shadow: 0 0 0 0.2rem rgba(239, 125, 45, 0.25) !important;
-    }
-
-
-    /* Hover */
-    #toggle-dark:hover {
-        border-color: #ef7d2d !important;
-    }
-
-
-    /* Warna icon matahari & bulan */
-    .theme-toggle svg {
-        color: #ef7d2d !important;
-    }
-
-
-    /* Saat dark mode */
-    html[data-bs-theme="dark"] .theme-toggle svg {
-        color: #ef7d2d !important;
-    }
+/* Buttons dark */
+html[data-bs-theme="dark"] .btn-outline-secondary { border-color: var(--sr-border-dk) !important; color: var(--sr-text-dk) !important; }
+html[data-bs-theme="dark"] .btn-outline-secondary:hover { background: var(--sr-hover-dk) !important; color: #fff !important; }
+html[data-bs-theme="dark"] .btn-light { background: rgba(255,255,255,.08) !important; border-color: var(--sr-border-dk) !important; color: var(--sr-text-dk) !important; }
 </style>
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </body>
-
 </html>

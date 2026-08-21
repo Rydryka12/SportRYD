@@ -158,6 +158,7 @@
             'kategori'    => $l->kategoriOlahraga->nama_kategori ?? 'Umum',
             'kategori_id' => $l->kategori_id,
             'tarif_format'=> number_format($l->tarif_per_jam, 0, ',', '.'),
+            'foto'        => $l->foto ? asset('storage/' . $l->foto) : null,
             'url_booking' => route('customer.booking.create', $l->id),
             'url_paket'   => route('customer.paket.index', $l->id),
         ];
@@ -217,6 +218,17 @@
         <template x-for="lapangan in filtered()" :key="lapangan.id">
             <div class="col-12 col-md-6 col-lg-4">
                 <div class="card lapangan-card shadow-sm h-100 border-0">
+                    <!-- Foto / Placeholder gradient -->
+                    <template x-if="lapangan.foto">
+                        <img :src="lapangan.foto" :alt="lapangan.nama"
+                             style="width:100%;height:160px;object-fit:cover;">
+                    </template>
+                    <template x-if="!lapangan.foto">
+                        <div :style="`width:100%;height:160px;display:flex;align-items:center;justify-content:center;font-size:2.5rem;font-weight:800;color:white;background:${gradientColor(lapangan.kategori_id)};`"
+                             x-text="lapangan.nama.charAt(0).toUpperCase()">
+                        </div>
+                    </template>
+
                     <div class="card-body p-4 d-flex flex-column">
                         
                         <!-- Badges -->
@@ -282,7 +294,15 @@
                  style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:white;border-radius:1rem;width:calc(100% - 2rem);max-width:520px;overflow:hidden;box-shadow:0 20px 25px -5px rgba(0,0,0,.2);">
 
                 <!-- Banner atas -->
-                <div style="background:linear-gradient(135deg,#f0f4fd 0%,#fdf4f0 100%);height:88px;position:relative;">
+                <div style="height:88px;position:relative;overflow:hidden;">
+                    <template x-if="$store.modal.lapangan?.foto">
+                        <img :src="$store.modal.lapangan.foto" :alt="$store.modal.lapangan.nama"
+                             style="width:100%;height:100%;object-fit:cover;filter:brightness(0.7);">
+                    </template>
+                    <template x-if="!$store.modal.lapangan?.foto">
+                        <div :style="`width:100%;height:100%;background:linear-gradient(135deg,#f0f4fd 0%,#fdf4f0 100%);`"></div>
+                    </template>
+
                     <span style="position:absolute;top:12px;left:12px;background:white;border:1px solid #dee2e6;border-radius:50px;padding:4px 14px;font-size:0.78rem;font-weight:600;color:#12244a;"
                           x-text="$store.modal.lapangan?.kategori"></span>
                     <div style="position:absolute;bottom:-26px;left:50%;transform:translateX(-50%);width:52px;height:52px;background:#e5e9f2;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:800;color:#12244a;box-shadow:0 4px 8px rgba(0,0,0,.1);"
@@ -290,7 +310,7 @@
                     <!-- Tombol tutup -->
                     <button type="button"
                             @click.stop="$store.modal.open = false"
-                            style="position:absolute;top:10px;right:10px;background:none;border:none;cursor:pointer;font-size:1.1rem;color:#6b7280;line-height:1;padding:4px;">
+                            style="position:absolute;top:10px;right:10px;background:rgba(255,255,255,0.9);border:none;cursor:pointer;font-size:1.1rem;color:#6b7280;line-height:1;padding:4px;border-radius:50%;">
                         <i class="bi bi-x-lg"></i>
                     </button>
                 </div>
@@ -354,6 +374,15 @@
     });
 
     function lapanganFilter() {
+        const gradients = [
+            'linear-gradient(135deg,#12244a,#1b3060)',
+            'linear-gradient(135deg,#ef7d2d,#d8691b)',
+            'linear-gradient(135deg,#2563eb,#1d4ed8)',
+            'linear-gradient(135deg,#16a34a,#15803d)',
+            'linear-gradient(135deg,#7c3aed,#6d28d9)',
+            'linear-gradient(135deg,#dc2626,#b91c1c)',
+        ];
+
         return {
             search: '',
             activeKategori: null,
@@ -365,6 +394,10 @@
                     const matchSearch = l.nama.toLowerCase().includes(this.search.toLowerCase());
                     return matchKategori && matchSearch;
                 });
+            },
+
+            gradientColor(kategoriId) {
+                return gradients[(kategoriId - 1) % gradients.length];
             },
 
             bukaPilihJenis(lapangan) {

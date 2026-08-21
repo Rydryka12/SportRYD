@@ -331,12 +331,12 @@
                     <div class="row mb-4">
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Metode Bayar</label>
-                            <select name="metode_bayar"
-                                    class="form-select @error('metode_bayar') is-invalid @enderror">
-                                <option value="Tunai" @selected(old('metode_bayar') === 'Tunai')>Tunai</option>
-                                <option value="QRIS"  @selected(old('metode_bayar') === 'QRIS')>QRIS</option>
-                            </select>
-                            @error('metode_bayar')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                            <div class="d-flex align-items-center gap-2 p-2 rounded"
+                                 style="border:1px solid #dee2e6;background:#f8f9fa;">
+                                <i class="bi bi-cash-coin" style="color:#16a34a;font-size:1.1rem;"></i>
+                                <span class="fw-semibold" style="font-size:0.923rem;">Cash</span>
+                            </div>
+                            <input type="hidden" name="metode_bayar" value="Cash">
                         </div>
                     </div>
 

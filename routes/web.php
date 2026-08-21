@@ -7,6 +7,7 @@ use App\Http\Controllers\Customer\CustomerLapanganController;
 use App\Http\Controllers\Customer\BookingController;
 use App\Http\Controllers\Customer\PaketLanggananController as CustomerPaketLanggananController;
 use App\Http\Controllers\Kasir\BookingController as KasirBookingController;
+use App\Http\Controllers\Kasir\DashboardController as KasirDashboardController;
 use App\Http\Controllers\Admin\PaketLanggananController;
 use App\Http\Controllers\Admin\PoinVoucherController;
 use App\Http\Controllers\Customer\PoinController;
@@ -24,7 +25,12 @@ use Illuminate\Support\Facades\Auth;
 
 
 
-Route::view('/', 'welcome');
+Route::get('/', function () {
+    if (auth()->check()) {
+        return redirect()->route('dashboard');
+    }
+    return view('welcome');
+})->name('home');
 
 Route::post('/logout', function () {
     Auth::guard('web')->logout();
@@ -43,7 +49,7 @@ Route::get('/dashboard', function () {
     return match (auth()->user()->role) {
         'Admin' => redirect()->route('admin.dashboard'),
         // 'Admin' => 'Tembus! Berarti masalahnya ada di Middleware Admin',
-        'Kasir' => redirect()->route('kasir.booking.index'),
+        'Kasir' => redirect()->route('kasir.dashboard'),
         'Customer' => redirect()->route('customer.beranda'),
         default => redirect('/'),
     };
@@ -126,8 +132,10 @@ Route::post('/paket/{langganan}/pakai-sesi', [PakaiSesiController::class, 'store
 
 // KASIR
 Route::middleware(['auth', 'role:Kasir'])->prefix('kasir')->name('kasir.')->group(function () {
+    Route::get('/dashboard', [KasirDashboardController::class, 'index'])->name('dashboard');
     Route::get('/booking', [KasirBookingController::class, 'index'])->name('booking.index');
     Route::post('/pembayaran/{pembayaran}/konfirmasi', [KasirBookingController::class, 'konfirmasiPembayaran'])->name('pembayaran.konfirmasi');
+    Route::delete('/pembayaran/{pembayaran}/tolak', [KasirBookingController::class, 'tolakDp'])->name('pembayaran.tolak');
     Route::patch('/booking/{booking}/approve', [KasirBookingController::class, 'approve'])->name('booking.approve');
     Route::patch('/booking/{booking}/reject', [KasirBookingController::class, 'reject'])->name('booking.reject');
     Route::get('/booking/manual', [KasirBookingController::class, 'create'])->name('booking.create');

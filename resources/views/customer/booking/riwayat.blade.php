@@ -180,6 +180,80 @@
 
 
 <!-- ============================================== -->
+<!-- SECTION: SESI AKTIF SEKARANG                  -->
+<!-- ============================================== -->
+@if ($sesiAktif)
+    @php
+        $jamSelesai  = \Carbon\Carbon::parse($sesiAktif->tanggal . ' ' . $sesiAktif->jam_selesai);
+        $jamMulai    = \Carbon\Carbon::parse($sesiAktif->tanggal . ' ' . $sesiAktif->jam_mulai);
+        $sisaDetik   = max((int) $now->diffInSeconds($jamSelesai, false), 0);
+        $totalDetik  = max((int) $jamMulai->diffInSeconds($jamSelesai), 1);
+    @endphp
+    <div class="mb-5" x-data="sisaWaktu({{ $sisaDetik }}, {{ $totalDetik }})" x-init="mulai()">
+        <h5 class="fw-bold text-navy mb-3">
+            <span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#16a34a;margin-right:6px;animation:pulse 1.5s infinite;vertical-align:middle;"></span>
+            Sesi Berlangsung Sekarang
+        </h5>
+
+        <div class="card border-0 shadow-sm overflow-hidden" style="border-radius:1.25rem;">
+            {{-- Banner foto / gradient --}}
+            @if($sesiAktif->lapangan->foto)
+                <img src="{{ asset('storage/' . $sesiAktif->lapangan->foto) }}"
+                     alt="{{ $sesiAktif->lapangan->nama_lapang }}"
+                     style="width:100%;height:140px;object-fit:cover;filter:brightness(0.6);">
+            @else
+                <div style="width:100%;height:140px;background:linear-gradient(135deg,#12244a 0%,#1b3060 100%);"></div>
+            @endif
+
+            <div class="card-body p-4">
+                <div class="row align-items-center g-3">
+                    {{-- Info lapangan --}}
+                    <div class="col-12 col-md-6">
+                        <div class="d-flex align-items-center gap-3">
+                            <div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#12244a,#1b3060);display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:800;color:white;flex-shrink:0;">
+                                {{ strtoupper(substr($sesiAktif->lapangan->nama_lapang, 0, 1)) }}
+                            </div>
+                            <div>
+                                <div class="fw-bold text-navy" style="font-size:1.1rem;">{{ $sesiAktif->lapangan->nama_lapang }}</div>
+                                <div class="text-muted small">
+                                    {{ $sesiAktif->lapangan->kategoriOlahraga->nama_kategori ?? '' }}
+                                    &middot;
+                                    {{ \Carbon\Carbon::parse($sesiAktif->jam_mulai)->format('H:i') }} – {{ \Carbon\Carbon::parse($sesiAktif->jam_selesai)->format('H:i') }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Timer sisa waktu --}}
+                    <div class="col-12 col-md-6">
+                        <div class="text-md-end">
+                            <div class="text-muted small mb-1">Sisa waktu main</div>
+                            <div class="fw-bold" style="font-size:2rem;color:#12244a;line-height:1;" x-text="formatSisa()"></div>
+                            <div class="text-muted small mt-1">
+                                Selesai pukul {{ \Carbon\Carbon::parse($sesiAktif->jam_selesai)->format('H:i') }} WIB
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Progress bar --}}
+                <div class="mt-3">
+                    <div style="background:#f1f3f5;border-radius:50px;height:8px;overflow:hidden;">
+                        <div style="background:linear-gradient(90deg,#16a34a,#4ade80);height:100%;border-radius:50px;transition:width 1s linear;"
+                             :style="`width:${pctSisa}%;`"></div>
+                    </div>
+                    <div class="d-flex justify-content-between mt-1">
+                        <span class="small text-muted">{{ \Carbon\Carbon::parse($sesiAktif->jam_mulai)->format('H:i') }}</span>
+                        <span class="small" style="color:#16a34a;font-weight:600;" x-text="pctSisa + '% tersisa'"></span>
+                        <span class="small text-muted">{{ \Carbon\Carbon::parse($sesiAktif->jam_selesai)->format('H:i') }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+@endif
+
+<!-- ============================================== -->
 <!-- SECTION: RIWAYAT BOOKING -->
 <!-- ============================================== -->
 <h5 class="fw-bold text-navy mb-3">Riwayat Booking</h5>
@@ -317,4 +391,37 @@
 </template>
 
 </div>{{-- end x-data --}}
+
+<script>
+function sisaWaktu(sisaDetikAwal, totalDetik) {
+    return {
+        sisa: sisaDetikAwal,
+        pctSisa: totalDetik > 0 ? Math.round(sisaDetikAwal / totalDetik * 100) : 0,
+        total: totalDetik,
+
+        mulai() {
+            const iv = setInterval(() => {
+                if (this.sisa <= 0) {
+                    clearInterval(iv);
+                    this.sisa = 0;
+                    this.pctSisa = 0;
+                    return;
+                }
+                this.sisa--;
+                this.pctSisa = Math.round(this.sisa / this.total * 100);
+            }, 1000);
+        },
+
+        formatSisa() {
+            const j = Math.floor(this.sisa / 3600);
+            const m = Math.floor((this.sisa % 3600) / 60);
+            const d = this.sisa % 60;
+            if (j > 0) {
+                return j + ' jam ' + String(m).padStart(2,'0') + ':' + String(d).padStart(2,'0');
+            }
+            return String(m).padStart(2,'0') + ':' + String(d).padStart(2,'0');
+        }
+    };
+}
+</script>
 @endsection

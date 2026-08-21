@@ -18,25 +18,9 @@ class BookingController extends Controller
 {
     public function index()
     {
-        // Tandai booking yang jamnya sudah lewat sebagai Selesai + beri poin
         Artisan::call('booking:selesaikan-lewat');
 
         $now = now();
-
-        // Data monitoring: semua lapangan aktif + booking yang sedang berlangsung sekarang
-        $lapanganList = Lapangan::where('status_aktif', 'Aktif')
-            ->with('kategoriOlahraga')
-            ->orderBy('nama_lapang')
-            ->get();
-
-        // Booking yang sedang berlangsung saat ini (hari ini, jam_mulai <= now <= jam_selesai)
-        $sedangBerlangsung = Booking::where('status', 'Akan Datang')
-            ->where('tanggal', $now->toDateString())
-            ->where('jam_mulai', '<=', $now->format('H:i:s'))
-            ->where('jam_selesai', '>', $now->format('H:i:s'))
-            ->with('customer', 'lapangan')
-            ->get()
-            ->keyBy('lapangan_id'); // key by lapangan_id agar mudah di-lookup di view
 
         // Booking menunggu approval dari customer
         $bookingPendingApproval = Booking::where('status', 'Menunggu Approval')
@@ -44,15 +28,13 @@ class BookingController extends Controller
             ->orderBy('created_at')
             ->get();
 
-        // Pembayaran menunggu konfirmasi (booking manual kasir via QRIS)
+        // Pembayaran menunggu konfirmasi DP
         $pembayaranPending = Pembayaran::where('status', 'Menunggu Konfirmasi')
             ->with('booking.customer', 'booking.lapangan')
             ->orderBy('created_at')
             ->get();
 
         return view('kasir.booking.index', compact(
-            'lapanganList',
-            'sedangBerlangsung',
             'bookingPendingApproval',
             'pembayaranPending',
             'now'
@@ -91,7 +73,7 @@ class BookingController extends Controller
             Pembayaran::create([
                 'booking_id' => $booking->id,
                 'jumlah'     => $booking->harga,
-                'metode'     => 'QRIS',
+                'metode'     => 'Cash',
                 'status'     => 'Menunggu Konfirmasi',
             ]);
         });
@@ -112,11 +94,23 @@ class BookingController extends Controller
     public function konfirmasiPembayaran(Pembayaran $pembayaran)
     {
         $pembayaran->update([
-            'status'          => 'Terkonfirmasi',
+            'status'            => 'Terkonfirmasi',
+            'dp_terkonfirmasi'  => true,
             'dikonfirmasi_oleh' => auth()->id(),
         ]);
 
-        return back()->with('success', 'Pembayaran berhasil dikonfirmasi.');
+        return back()->with('success', 'Pembayaran DP berhasil dikonfirmasi. Waktu main customer akan berjalan otomatis.');
+    }
+
+    // Tolak / batalkan DP — booking kembali dibatalkan
+    public function tolakDp(Pembayaran $pembayaran)
+    {
+        DB::transaction(function () use ($pembayaran) {
+            $pembayaran->booking()->update(['status' => 'Dibatalkan']);
+            $pembayaran->delete();
+        });
+
+        return back()->with('success', 'DP ditolak dan booking ' . $pembayaran->booking->customer->name . ' dibatalkan.');
     }
 
     // JSON endpoint: slot terisi untuk lapangan + tanggal tertentu (dipakai Alpine fetch di form booking manual)
@@ -194,7 +188,7 @@ class BookingController extends Controller
             'tanggal'        => 'required|date|after_or_equal:today',
             'jam_mulai'      => 'required|date_format:H:i',
             'jam_selesai'    => 'required|date_format:H:i|after:jam_mulai',
-            'metode_bayar'   => 'required|in:Tunai,QRIS',
+            'metode_bayar'   => 'required|in:Cash',
         ]);
 
         $lapangan = Lapangan::findOrFail($validated['lapangan_id']);
@@ -248,6 +242,7 @@ class BookingController extends Controller
                 'jumlah'            => $booking->harga,
                 'metode'            => $validated['metode_bayar'],
                 'status'            => 'Terkonfirmasi',
+                'dp_terkonfirmasi'  => true,
                 'dikonfirmasi_oleh' => auth()->id(),
             ]);
         });

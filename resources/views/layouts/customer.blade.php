@@ -28,161 +28,55 @@
 
     <style>
         :root {
-            --navy: #12244a;
-            --navy-soft: #1b3060;
-            --orange: #ef7d2d;
-            --orange-dark: #d8691b;
-            --bg: #f2f7ff;
-            --text-muted: #6b7a99;
-            --radius: 14px;
+            --navy: #12244a; --navy-soft: #1b3060;
+            --orange: #ef7d2d; --orange-dark: #d8691b;
+            --bg: #f4f6fb; --text-muted: #6b7a99; --radius: 10px;
         }
-
-        * { font-family: 'Nunito', sans-serif; }
-
-        /* Sembunyikan elemen Alpine.js sebelum init (mencegah flash) */
+        html { font-size: 13px; }
+        * { font-family: 'Nunito', sans-serif; box-sizing: border-box; }
         [x-cloak] { display: none !important; }
-
-        body {
-            background-color: var(--bg);
-            color: #1e2a45;
-        }
-
+        body { background-color: var(--bg); color: #1e2a45; font-size: 1rem; }
         a { text-decoration: none; }
 
-        /* ===== Navbar ===== */
-        .navbar-custom {
-            background-color: var(--navy);
-            padding: 14px 0;
-            box-shadow: 0 4px 16px rgba(18, 36, 74, 0.15);
-        }
+        /* Navbar */
+        .navbar-custom { background-color: var(--navy); padding: 10px 0; box-shadow: 0 3px 12px rgba(18,36,74,0.15); }
         .text-orange { color: var(--orange) !important; }
         .bg-orange { background-color: var(--orange) !important; color: #fff; }
+        .nav-link-custom { color: rgba(255,255,255,0.7) !important; font-weight: 600; padding: .4rem .85rem !important; border-radius: 7px; transition: all 0.2s ease; font-size: .923rem; }
+        .nav-link-custom:hover { color: #fff !important; background-color: rgba(255,255,255,0.07); }
+        .nav-link-custom.active { color: var(--orange) !important; background-color: rgba(255,255,255,0.1); }
+        .user-badge { background-color: rgba(255,255,255,0.08); border-radius: 50px; padding: 3px 12px 3px 4px; }
+        .avatar-circle { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; flex-shrink: 0; font-size: .85rem; }
 
-        .nav-link-custom {
-            color: rgba(255, 255, 255, 0.7) !important;
-            font-weight: 600;
-            padding: 0.5rem 1rem !important;
-            border-radius: 0.5rem;
-            transition: all 0.2s ease;
-        }
-        .nav-link-custom:hover { color: #fff !important; background-color: rgba(255,255,255,0.06); }
-        .nav-link-custom.active {
-            color: var(--orange) !important;
-            background-color: rgba(255, 255, 255, 0.1);
-        }
+        /* Content */
+        .content-wrapper { padding-bottom: 2.5rem; }
+        .page-content h1,.page-content h2,.page-content h3 { color: var(--navy); font-weight: 800; }
 
-        .user-badge {
-            background-color: rgba(255, 255, 255, 0.08);
-            border-radius: 50px;
-            padding: 4px 16px 4px 6px;
-        }
-        .avatar-circle {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
-            flex-shrink: 0;
-        }
-
-        /* ===== Content wrapper ===== */
-        .content-wrapper { padding-bottom: 3rem; }
-        .page-content h1, .page-content h2, .page-content h3 {
-            color: var(--navy);
-            font-weight: 800;
-        }
-        .page-content p.text-muted-custom { color: var(--text-muted); }
-
-        /* ===== Filter pills (Semua / Futsal / Padel / Badminton) ===== */
-        .filter-pills {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin: 1.25rem 0 1.75rem;
-        }
-        .filter-pill {
-            border: 1px solid #dfe6f5;
-            background: #fff;
-            color: var(--navy);
-            font-weight: 700;
-            font-size: 0.9rem;
-            padding: 0.45rem 1.1rem;
-            border-radius: 50px;
-            transition: all 0.2s ease;
-            display: inline-block;
-        }
+        /* Filter pills */
+        .filter-pills { display: flex; flex-wrap: wrap; gap: .4rem; margin: 1rem 0 1.5rem; }
+        .filter-pill { border: 1px solid #dfe6f5; background: #fff; color: var(--navy); font-weight: 700; font-size: .846rem; padding: .35rem .9rem; border-radius: 7px; transition: all 0.2s ease; display: inline-block; cursor: pointer; }
         .filter-pill:hover { border-color: var(--orange); color: var(--orange); }
-        .filter-pill.active {
-            background-color: var(--navy);
-            border-color: var(--navy);
-            color: #fff;
-        }
+        .filter-pill.active { background-color: var(--navy); border-color: var(--navy); color: #fff; }
 
-        /* ===== Lapangan card grid ===== */
-        .lapangan-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 1.25rem;
-        }
-        .card-lapangan {
-            background: #fff;
-            border-radius: var(--radius);
-            border: 1px solid #eef1f8;
-            box-shadow: 0 2px 10px rgba(18, 36, 74, 0.06);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .card-lapangan:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 24px rgba(18, 36, 74, 0.12);
-        }
-        .card-lapangan-thumb {
-            height: 150px;
-            background: linear-gradient(135deg, var(--navy), var(--navy-soft));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: rgba(255,255,255,0.85);
-            font-size: 2rem;
-        }
-        .card-lapangan-body { padding: 1.1rem 1.2rem 1.3rem; flex: 1; display: flex; flex-direction: column; }
-        .card-lapangan-title { font-weight: 800; color: var(--navy); font-size: 1.05rem; margin-bottom: 0.15rem; }
-        .badge-tipe {
-            display: inline-block;
-            background: rgba(239, 125, 45, 0.12);
-            color: var(--orange-dark);
-            font-weight: 700;
-            font-size: 0.72rem;
-            padding: 0.2rem 0.6rem;
-            border-radius: 50px;
-            margin-bottom: 0.6rem;
-            width: fit-content;
-        }
-        .card-lapangan-tarif-label { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.1rem; }
-        .card-lapangan-tarif { font-weight: 800; color: var(--navy); font-size: 1.15rem; margin-bottom: 0.9rem; }
-        .btn-booking {
-            margin-top: auto;
-            background-color: var(--orange);
-            color: #fff;
-            border: none;
-            font-weight: 700;
-            padding: 0.55rem 0.9rem;
-            border-radius: 8px;
-            text-align: center;
-            transition: background-color 0.2s ease;
-        }
+        /* Lapangan card */
+        .lapangan-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; }
+        .card-lapangan { background: #fff; border-radius: var(--radius); border: 1px solid #eef1f8; box-shadow: 0 2px 8px rgba(18,36,74,0.06); overflow: hidden; display: flex; flex-direction: column; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .card-lapangan:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(18,36,74,0.11); }
+        .card-lapangan-thumb { height: 140px; background: linear-gradient(135deg, var(--navy), var(--navy-soft)); display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.85); font-size: 1.8rem; }
+        .card-lapangan-body { padding: .9rem 1rem 1.1rem; flex: 1; display: flex; flex-direction: column; }
+        .card-lapangan-title { font-weight: 800; color: var(--navy); font-size: .923rem; margin-bottom: .1rem; }
+        .badge-tipe { display: inline-block; background: rgba(239,125,45,0.12); color: var(--orange-dark); font-weight: 700; font-size: .692rem; padding: .18rem .5rem; border-radius: 6px; margin-bottom: .5rem; width: fit-content; }
+        .card-lapangan-tarif-label { font-size: .72rem; color: var(--text-muted); margin-bottom: .08rem; }
+        .card-lapangan-tarif { font-weight: 800; color: var(--navy); font-size: 1rem; margin-bottom: .75rem; }
+        .btn-booking { margin-top: auto; background-color: var(--orange); color: #fff; border: none; font-weight: 700; padding: .45rem .85rem; border-radius: 8px; text-align: center; transition: background-color 0.2s ease; font-size: .846rem; }
         .btn-booking:hover { background-color: var(--orange-dark); color: #fff; }
 
-        /* ===== Alerts ===== */
-        .alert { border-radius: var(--radius); border: none; }
+        /* Alerts */
+        .alert { border-radius: var(--radius); border: none; font-size: .923rem; }
         .alert-success { background-color: #e6f7ee; color: #1a7f4b; }
-        .alert-danger { background-color: #fdecec; color: #c0392b; }
+        .alert-danger  { background-color: #fdecec; color: #c0392b; }
 
-        footer { color: var(--text-muted); }
+        footer { color: var(--text-muted); font-size: .846rem; }
     </style>
 </head>
 
@@ -224,6 +118,7 @@
 
                             <!-- Bagian Kanan: User Info & Logout -->
                             <div class="d-flex align-items-center gap-3 mt-3 mt-lg-0">
+                                @auth
                                 <div class="user-badge d-flex align-items-center gap-2 text-white">
                                     <div class="avatar-circle bg-orange fs-6">
                                         {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
@@ -240,6 +135,10 @@
                                         <i class="bi bi-box-arrow-right fs-4"></i>
                                     </button>
                                 </form>
+                                @else
+                                <a href="{{ route('login') }}" class="btn btn-sm btn-outline-light fw-bold">Masuk</a>
+                                <a href="{{ route('register') }}" class="btn btn-sm fw-bold" style="background:#ef7d2d;color:white;border:none;">Daftar</a>
+                                @endauth
                             </div>
                         </div>
                     </div>
@@ -279,9 +178,7 @@
         </div>
     </div>
 
-    <!-- Script Mazer -->
-    <script src="{{ asset('assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js') }}"></script>
-    <script src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </body>

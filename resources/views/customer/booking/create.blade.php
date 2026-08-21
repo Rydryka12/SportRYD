@@ -102,6 +102,13 @@
         cursor: not-allowed;
         opacity: 0.85;
     }
+    .slot-lewat {
+        background-color: #f1f3f5;
+        border: 1px solid #dee2e6;
+        color: #adb5bd;
+        cursor: not-allowed;
+        opacity: 0.7;
+    }
 
     @keyframes pop {
         0% { transform: scale(0.9); }
@@ -207,13 +214,30 @@
                         $slotTerisi[] = $j;
                     }
                 }
+
+                // Blokir slot yang sudah lewat jika booking di hari ini.
+                // Jam X dianggap "lewat" jika jam sekarang sudah >= X+1:00
+                // (misal jam 09.10 → jam 09:00-10:00 sudah tidak bisa dipilih)
+                $slotLewat = [];
+                if (\Carbon\Carbon::parse($tanggal)->isToday()) {
+                    $jamSekarang = (int) now()->format('G'); // 0-23, tanpa leading zero
+                    $menitSekarang = (int) now()->format('i');
+                    // Jam X tidak bisa dipilih jika now >= X:00
+                    // Artinya slot 07 tidak bisa jika jam >= 07:00
+                    for ($j = 7; $j <= 22; $j++) {
+                        if ($jamSekarang > $j || ($jamSekarang === $j && $menitSekarang >= 0)) {
+                            $slotLewat[] = $j;
+                        }
+                    }
+                }
             @endphp
 
             <div x-data="{
                     selected: [],
                     terisi: {{ json_encode($slotTerisi) }},
+                    lewat: {{ json_encode($slotLewat) }},
                     toggle(jam) {
-                        if (this.terisi.includes(jam)) return;
+                        if (this.terisi.includes(jam) || this.lewat.includes(jam)) return;
                         if (this.selected.includes(jam)) {
                             this.selected = this.selected.filter(j => j !== jam);
                             return;
@@ -233,6 +257,7 @@
                         <span><span class="legend-dot" style="background:white; border:1px solid #dee2e6;"></span>Kosong</span>
                         <span><span class="legend-dot" style="background:#12244a;"></span>Dipilih</span>
                         <span><span class="legend-dot" style="background:#fdecea; border:1px solid #f5c6cb;"></span>Terisi</span>
+                        <span><span class="legend-dot" style="background:#f1f3f5; border:1px solid #dee2e6;"></span>Lewat</span>
                     </div>
                 </div>
 
@@ -241,20 +266,30 @@
                         <div class="col-6 col-sm-3">
                             <button type="button"
                                     @click="toggle({{ $jam }})"
-                                    :disabled="terisi.includes({{ $jam }})"
+                                    :disabled="terisi.includes({{ $jam }}) || lewat.includes({{ $jam }})"
                                     :class="{
-                                        'slot-terisi': terisi.includes({{ $jam }}),
+                                        'slot-terisi':  terisi.includes({{ $jam }}),
+                                        'slot-lewat':   !terisi.includes({{ $jam }}) && lewat.includes({{ $jam }}),
                                         'slot-dipilih': selected.includes({{ $jam }}),
-                                        'slot-kosong': !terisi.includes({{ $jam }}) && !selected.includes({{ $jam }})
+                                        'slot-kosong':  !terisi.includes({{ $jam }}) && !lewat.includes({{ $jam }}) && !selected.includes({{ $jam }})
                                     }"
                                     class="slot-btn w-100 border-0 d-flex flex-column align-items-center justify-content-center">
-                                <span x-show="!selected.includes({{ $jam }})" x-cloak>
-                                    <i class="bi bi-clock me-1"></i>{{ sprintf('%02d:00 - %02d:00', $jam, $jam + 1) }}
-                                </span>
-                                <span x-show="selected.includes({{ $jam }})" x-cloak>
-                                    <i class="bi bi-check-lg"></i> {{ sprintf('%02d:00 - %02d:00', $jam, $jam + 1) }}
-                                </span>
+                                <template x-if="lewat.includes({{ $jam }}) && !terisi.includes({{ $jam }})">
+                                    <span style="font-size:0.8rem;">
+                                        <i class="bi bi-clock-history me-1"></i>{{ sprintf('%02d:00-%02d:00', $jam, $jam+1) }}
+                                    </span>
+                                </template>
+                                <template x-if="!lewat.includes({{ $jam }}) && !selected.includes({{ $jam }}) && !terisi.includes({{ $jam }})">
+                                    <span><i class="bi bi-clock me-1"></i>{{ sprintf('%02d:00 - %02d:00', $jam, $jam + 1) }}</span>
+                                </template>
+                                <template x-if="selected.includes({{ $jam }})">
+                                    <span><i class="bi bi-check-lg"></i> {{ sprintf('%02d:00 - %02d:00', $jam, $jam + 1) }}</span>
+                                </template>
+                                <template x-if="terisi.includes({{ $jam }})">
+                                    <span style="font-size:0.8rem;"><i class="bi bi-lock me-1"></i>{{ sprintf('%02d:00-%02d:00', $jam, $jam+1) }}</span>
+                                </template>
                                 <small x-show="selected.includes({{ $jam }})" x-cloak class="fw-normal" style="font-size: 0.7rem;">Dipilih</small>
+                                <small x-show="lewat.includes({{ $jam }}) && !terisi.includes({{ $jam }})" x-cloak class="fw-normal" style="font-size:0.7rem;">Lewat</small>
                             </button>
                         </div>
                     @endfor

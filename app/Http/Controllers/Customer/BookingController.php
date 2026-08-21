@@ -97,6 +97,15 @@ class BookingController extends Controller
     {
         $now = now();
 
+        // Booking sedang berlangsung milik customer ini
+        $sesiAktif = Booking::where('customer_id', auth()->id())
+            ->where('status', 'Akan Datang')
+            ->where('tanggal', $now->toDateString())
+            ->where('jam_mulai', '<=', $now->format('H:i:s'))
+            ->where('jam_selesai', '>', $now->format('H:i:s'))
+            ->with('lapangan.kategoriOlahraga')
+            ->first();
+
         $bookingList = Booking::where('customer_id', auth()->id())
             ->with('lapangan')
             ->orderByDesc('tanggal')
@@ -126,6 +135,6 @@ class BookingController extends Controller
         $saldoKeluar = PoinCustomer::where('customer_id', auth()->id())->where('jenis', 'Keluar')->sum('jumlah_poin');
         $saldoPoin   = $saldoMasuk - $saldoKeluar;
 
-        return view('customer.booking.riwayat', compact('bookingList', 'paketAktifList', 'saldoPoin'));
+        return view('customer.booking.riwayat', compact('bookingList', 'paketAktifList', 'saldoPoin', 'sesiAktif', 'now'));
     }
 }
